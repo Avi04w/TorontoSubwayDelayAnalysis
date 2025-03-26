@@ -1,6 +1,6 @@
 ---
 title: "JSC370 Final Project"
-author: "Your Name"
+author: "Avi Walia"
 output: 
     html_document:
         toc: TRUE
@@ -8,3 +8,25 @@ output:
 ---
 
 This is my JSC370 final project website!
+
+
+```{r echo=F, warning=F, message=F}
+source("process_starbucks_data.R")
+```
+
+## Showcasing plots {.tabset}
+
+### Figure 1
+
+```{r echo=FALSE}
+p1
+```
+
+
+### Figure 2
+
+```{r echo=FALSE}
+p2
+```
+
+{-}
