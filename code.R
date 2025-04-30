@@ -101,7 +101,7 @@ delay_causes <- subway_data |>
   group_by(`Code Description`) |> 
   summarise(
     Count = n(), 
-    `Average Delay Time` = mean(`Min Delay`)) |> 
+    `Average Delay Time` = mean(Min_Delay)) |> 
   arrange(desc(Count)) |> 
   head(10)
 
@@ -125,7 +125,7 @@ p2 <- ggplot(delay_causes, aes(area = Count, fill = Count, label = paste(`Code D
 
 delay_summary <- subway_data |> 
   group_by(Code, `Code Description`) |> 
-  summarise(Total_Delay_Time = sum(`Min Delay`, na.rm = TRUE)) |> 
+  summarise(Total_Delay_Time = sum(Min_Delay, na.rm = TRUE)) |> 
   arrange(desc(Total_Delay_Time)) |> 
   head(10)
 
@@ -154,20 +154,20 @@ delay_summary |>
   kable(caption = "Delay Code Definitions")
 
 peak_summary <- subway_data |> 
-  group_by(`Time Category`) |> 
+  group_by(Time_Category) |> 
   summarise(
     `Total Delays` = n(),
-    `Average Delay Time (mins)` = round(mean(`Min Delay`, na.rm = TRUE), 2)
+    `Average Delay Time (mins)` = round(mean(Min_Delay, na.rm = TRUE), 2)
   )
 
 peak_summary <- peak_summary |> 
-  mutate(`Average Number of Delays per Hour` = ifelse(`Time Category` == "Peak", 
+  mutate(`Average Number of Delays per Hour` = ifelse(Time_Category == "Peak", 
                                              `Total Delays` / 8, 
                                              `Total Delays` / 14))
 
 kable(peak_summary, caption = "Delays During Peak vs Non-Peak Hours")
 
-p4 <- ggplot(subway_data, aes(x = Hour, fill = `Time Category`)) +
+p4 <- ggplot(subway_data, aes(x = Hour, fill = Time_Category)) +
   geom_bar() +
   labs(
     title = "Number of Delays by Hour of the Day",

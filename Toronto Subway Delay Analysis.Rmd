@@ -1,7 +1,7 @@
 ---
-title: "Toronto Subway Delay Analysis: Causes, Timing, and Line-Specific Patterns"
+title: "Toronto Subway Delay Analysis and Prediction: Causes, Timing, and Line-Specific Patterns"
 author: "Avi Walia"
-date: "March 14, 2025"
+date: "April 30, 2025"
 output:
   pdf_document:
     fig_width: 10
@@ -225,7 +225,7 @@ delay_causes <- subway_data |>
   group_by(`Code Description`) |> 
   summarise(
     Count = n(), 
-    `Average Delay Time` = mean(`Min Delay`)) |> 
+    `Average Delay Time` = mean(`Min_Delay`)) |> 
   arrange(desc(Count)) |> 
   head(10)
 
@@ -257,7 +257,7 @@ We can also look at which delays took the most time total:
 ```{r total-delay-time}
 delay_summary <- subway_data |> 
   group_by(Code, `Code Description`) |> 
-  summarise(Total_Delay_Time = sum(`Min Delay`, na.rm = TRUE)) |> 
+  summarise(Total_Delay_Time = sum(Min_Delay, na.rm = TRUE)) |> 
   arrange(desc(Total_Delay_Time)) |> 
   head(10)
 
@@ -294,14 +294,14 @@ Finally, we can view the occurrence of delays distributed by the time of day at 
 
 ```{r summary-stats-delays-hours}
 peak_summary <- subway_data |> 
-  group_by(`Time Category`) |> 
+  group_by(Time_Category) |> 
   summarise(
     `Total Delays` = n(),
-    `Average Delay Time (mins)` = round(mean(`Min Delay`, na.rm = TRUE), 2)
+    `Average Delay Time (mins)` = round(mean(Min_Delay, na.rm = TRUE), 2)
   )
 
 peak_summary <- peak_summary |> 
-  mutate(`Average Number of Delays per Hour` = ifelse(`Time Category` == "Peak", 
+  mutate(`Average Number of Delays per Hour` = ifelse(Time_Category == "Peak", 
                                              `Total Delays` / 8, 
                                              `Total Delays` / 14))
 
@@ -309,7 +309,7 @@ kable(peak_summary, caption = "Delays During Peak vs Non-Peak Hours")
 ```
 
 ```{r histogram-delays-hours}
-ggplot(subway_data, aes(x = Hour, fill = `Time Category`)) +
+ggplot(subway_data, aes(x = Hour, fill = Time_Category)) +
   geom_bar() +
   labs(
     title = "Number of Delays by Hour of the Day",
@@ -351,7 +351,7 @@ I will implement a variety of regression models including:
 * **Generalized Additive Models** (to capture non-linear temporal effects)
 * **Random Forest and Gradient Boosting Models** (to capture interactions and complex dependencies)
 
-Model performance will be evaluated using **RMSE**, **MAE**, and $\textbf{R^2}$ metrics on a holdout test set (80/20 split). This comparative analysis will identify the most suitable approach for forecasting subway delay durations and inform operational decision-making for delay mitigation strategies.
+Model performance will be evaluated using **RMSE**, **MAE**, and \(\mathbf{R^2}\) metrics on a holdout test set (80/20 split). This comparative analysis will identify the most suitable approach for forecasting subway delay durations and inform operational decision-making for delay mitigation strategies.
 
 ```{r}
 library(httr)
@@ -437,7 +437,7 @@ train_data <- regression_data[train_index, ]
 test_data  <- regression_data[-train_index, ]
 ```
 
-We start by fitting a linear regression model as a baseline. Then, a Generalized Linear Model (GAM) is fit. We will have a smoothing factor on Hour since time-of-day effects can be non-linear as well as precipitation, since heavy rainfall and snowfall might have an exponentially larger effect. We will reduce the model to incorporate only significant variables. Finally, we will implement and compare several regression models using historical TTC delay data. Specifically, I will fit a linear regression, a generalized additive model (GAM), a random forest, and an XGBoost regressor, using predictors such as time of day, precipitation, station, subway line, day of the week, delay type, and peak hour classification. Model performance will be evaluated using RMSE, MAE, and R² metrics on a held-out test set. This comparative analysis will identify the most accurate and robust modeling approach for understanding and forecasting subway delays.
+We start by fitting a linear regression model as a baseline. Then, a Generalized Linear Model (GAM) is fit. We will have a smoothing factor on Hour since time-of-day effects can be non-linear as well as precipitation, since heavy rainfall and snowfall might have an exponentially larger effect. We will reduce the model to incorporate only significant variables and pick the best model by compare the Akaike Information Criterion (AIC) values. Finally, we will implement and compare several regression models using historical TTC delay data. Specifically, I will fit a linear regression, a generalized additive model (GAM), a random forest, and an XGBoost regressor, using predictors such as time of day, precipitation, station, subway line, day of the week, delay type, and peak hour classification. Model performance will be evaluated using RMSE, MAE, and R² metrics on a held-out test set. This comparative analysis will identify the most accurate and robust modeling approach for understanding and forecasting subway delays.
 
 ```{r}
 # Fit linear regression model
@@ -643,6 +643,7 @@ The predicted vs. actual scatter plots further illustrate these findings. All mo
 ## Feature Importance
 
 To better understand which factors most strongly influence subway delay duration predictions, feature importance was extracted from the Random Forest and XGBoost models.
+
 ```{r}
 # Random Forest variable importance
 rf_importance <- varImp(rf_model)
@@ -660,7 +661,9 @@ ggplot(rf_imp_df, aes(x = reorder(Variable, Overall), y = Overall)) +
     y = "Importance Score"
   ) +
   theme_minimal()
+```
 
+```{r}
 # XGBoost variable importance
 xgb_importance <- varImp(xgb_model)
 
@@ -692,7 +695,3 @@ Based on the models developed in this analysis, we can estimate the duration of 
 While tree-based models like Random Forest performed slightly better in terms of RMSE and variable importance analysis revealed that precipitation, specific stations, and passenger-related incidents were consistently influential, all models struggled to predict longer or outlier delays. The clustering of predictions in the 0–10 minute range and the underestimation of extreme delays suggest that important explanatory factors may be missing, such as real-time ridership levels, operational disruptions, or special events.
 
 In conclusion, although it is possible to estimate delay durations to a limited degree using the available predictors, the low explanatory power indicates that more granular or contextual data is needed to build reliable and actionable prediction models.
-
-
-
-

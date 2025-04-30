@@ -68,6 +68,6 @@ Several process steps were applied to clean and prepare the data for analysis.
     * There is some data that was incorrectly inputted. One such example is that Warden station is once listed as being on the Yonge-University Line when it is actually on the Bloor-Danforth Line. 
     * There is a delay that lasted 6 hours that started at 4am. This is a massive outlier that occurred when the trains were not even running. We can ignore this point as it is not indicative of any trends that we are trying to find.
 
-There are 788 observations and 14 variables for each observation.
+There are 6500 observations and 16 variables for each observation.
 
 

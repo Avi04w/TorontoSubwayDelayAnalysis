@@ -368,13 +368,14 @@ station.</li>
 <div id="delays-per-station" class="section level3">
 <h3>Delays Per Station</h3>
 <p><img src="eda_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p>We can see that Bloor, Kennedy, Kipling, Finch, Dundas, Eglinton, and
-VMC stations have the highest number of delays. These are all either
-terminal stations (Finch, Kennedy, Kipling, and VMC) or are the highest
-traffic stations which see the most passengers (Dundas and Eglinton). We
-can also see that more Yonge-University line stations have have a large
-amount of delays. No stations from the Sheppard line made this list. We
-can further look into this by exploring the types of delays that are
+<p>From this, we can see that Kipling, Bloor, Kennedy, Eglinton, and
+Finch stations have the highest number of delays. These are all either
+transfer stations or are terminal stations (with the exception of
+Eglinton which is one of the busiest stations and the site of a future
+transfer station). We can also see that more Yonge-University line
+stations have have a large amount of delays, Kipling and Kennedy, which
+are are on the BD line have the most and third most delays. We can
+further look into this by exploring the types of delays that are
 occurring at stations.</p>
 </div>
 <div id="reasons-for-delay" class="section level3">
@@ -383,9 +384,9 @@ occurring at stations.</p>
 <table style="width:100%;">
 <caption>Top 10 Most Frequent Delay Causes</caption>
 <colgroup>
-<col width="70%" />
+<col width="69%" />
 <col width="7%" />
-<col width="22%" />
+<col width="23%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -397,66 +398,64 @@ occurring at stations.</p>
 <tbody>
 <tr class="odd">
 <td align="left">Disorderly Patron</td>
-<td align="right">3405</td>
-<td align="right">2.5013216</td>
-</tr>
-<tr class="even">
-<td align="left">Injured or ill Customer (In Station) - Transported</td>
-<td align="right">2680</td>
-<td align="right">0.0742537</td>
-</tr>
-<tr class="odd">
-<td align="left">Passenger Other</td>
-<td align="right">2508</td>
-<td align="right">2.3257576</td>
+<td align="right">887</td>
+<td align="right">6.603157</td>
 </tr>
 <tr class="even">
 <td align="left">Passenger Assistance Alarm Activated - No Trouble
 Found</td>
-<td align="right">1713</td>
-<td align="right">2.0811442</td>
+<td align="right">652</td>
+<td align="right">4.101227</td>
 </tr>
 <tr class="odd">
-<td align="left">Injured or ill Customer (In Station) - Medical Aid
-Refused</td>
-<td align="right">1486</td>
-<td align="right">0.1130552</td>
-</tr>
-<tr class="even">
 <td align="left">OPTO (COMMS) Train Door Monitoring</td>
-<td align="right">1452</td>
-<td align="right">3.4765840</td>
-</tr>
-<tr class="odd">
-<td align="left">Miscellaneous Other</td>
-<td align="right">1019</td>
-<td align="right">1.4533857</td>
+<td align="right">581</td>
+<td align="right">5.922547</td>
 </tr>
 <tr class="even">
-<td align="left">Escalator/Elevator Incident</td>
-<td align="right">832</td>
-<td align="right">0.0144231</td>
+<td align="left">Passenger Other</td>
+<td align="right">422</td>
+<td align="right">9.592417</td>
 </tr>
 <tr class="odd">
 <td align="left">Injured or ill Customer (On Train) - Medical Aid
 Refused</td>
-<td align="right">807</td>
-<td align="right">5.1846344</td>
+<td align="right">411</td>
+<td align="right">6.503650</td>
+</tr>
+<tr class="even">
+<td align="left">Unsanitary Vehicle</td>
+<td align="right">312</td>
+<td align="right">4.762821</td>
+</tr>
+<tr class="odd">
+<td align="left">Injured or ill Customer (On Train) - Transported</td>
+<td align="right">256</td>
+<td align="right">11.015625</td>
 </tr>
 <tr class="even">
 <td align="left">Unauthorized at Track Level</td>
-<td align="right">721</td>
-<td align="right">7.7711512</td>
+<td align="right">256</td>
+<td align="right">13.257812</td>
+</tr>
+<tr class="odd">
+<td align="left">Transportation Department - Other</td>
+<td align="right">180</td>
+<td align="right">6.172222</td>
+</tr>
+<tr class="even">
+<td align="left">ATC Project</td>
+<td align="right">167</td>
+<td align="right">5.389222</td>
 </tr>
 </tbody>
 </table>
 <p>The top reasons for subway delays in Toronto seem to be
 passenger-related incidents, with “Disorderly Patron” being the most
-frequent cause, accounting for 3405 delays with an average delay of 2.5
-minutes. Other notable causes include Injured or Ill Customers (2680
-delays, 0.07 min avg), Passenger Assistance Alarm Activated (1713
-delays, 2.08 min avg) and Train Door Monitoring (1452 delays, 3.48 min
-avg).</p>
+frequent cause, accounting for 887 delays with an average delay of 6.6
+minutes. Other notable causes include Passenger Assistance Alarm
+Activation (652 delays, 4.1 min avg) and OPTO (COMMS) Train Door
+Monitoring (581 delays, 5.9 min avg).</p>
 </div>
 <div id="total-delay-time" class="section level3">
 <h3>Total Delay Time</h3>
@@ -479,56 +478,55 @@ avg).</p>
 <td align="left">Passenger Other</td>
 </tr>
 <tr class="odd">
-<td align="left">SUUT</td>
-<td align="left">Unauthorized at Track Level</td>
-</tr>
-<tr class="even">
 <td align="left">PUOPO</td>
 <td align="left">OPTO (COMMS) Train Door Monitoring</td>
+</tr>
+<tr class="even">
+<td align="left">SUUT</td>
+<td align="left">Unauthorized at Track Level</td>
 </tr>
 <tr class="odd">
 <td align="left">MUI</td>
 <td align="left">Injured or ill Customer (On Train) - Transported</td>
 </tr>
 <tr class="even">
-<td align="left">MUIR</td>
-<td align="left">Injured or ill Customer (On Train) - Medical Aid
-Refused</td>
-</tr>
-<tr class="odd">
 <td align="left">MUPAA</td>
 <td align="left">Passenger Assistance Alarm Activated - No Trouble
 Found</td>
 </tr>
-<tr class="even">
-<td align="left">MUPR1</td>
-<td align="left">Priority One - Train in Contact With Person</td>
-</tr>
 <tr class="odd">
+<td align="left">MUIR</td>
+<td align="left">Injured or ill Customer (On Train) - Medical Aid
+Refused</td>
+</tr>
+<tr class="even">
 <td align="left">MUSAN</td>
 <td align="left">Unsanitary Vehicle</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">MUPLB</td>
 <td align="left">Fire/Smoke Plan B - Source TTC</td>
+</tr>
+<tr class="even">
+<td align="left">TUO</td>
+<td align="left">Transportation Department - Other</td>
 </tr>
 </tbody>
 </table>
 <p>The top delay causes by total delay time highlight disorderly patrons
-as the most significant issue, causing over 8,000 minutes of delays
+as the most significant issue, causing over 5,000 minutes of delays
 throughout the year. Other major contributors include unauthorized
-people at track level, train door monitoring and injured or ill
-customers, each accumulating several hundred minutes of delays.
-Passenger-related incidents, including assaults, alarms, and other
-disruptions, collectively contribute to substantial downtime. The
-difference we see with this and the last visualization is that a few of
-the most commonly occurring delays, such as injured passengers in the
-station (not the trains), and elevator/escalator incidents are not in
-the top 10 of total delay time since the average time for those delays
-is much less.</p>
+people at track level, and injured or ill customers, each accumulating
+several hundred minutes of delays. Passenger-related incidents,
+including assaults, alarms, and other disruptions, collectively
+contribute to substantial downtime. The difference we see with this and
+the last visualization is that a few of the most commonly occurring
+delays, such as the passenger alarm being activated and unsanitary
+vehicle are not in the top 10 of total delay time since the average time
+for those delays is much less.</p>
 </div>
-<div id="time-of-day-of-delays" class="section level3">
-<h3>Time of Day of Delays</h3>
+<div id="delays-time-of-day" class="section level3">
+<h3>Delays Time of Day</h3>
 <p><img src="eda_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <table>
 <caption>Delays During Peak vs Non-Peak Hours</caption>
@@ -540,7 +538,7 @@ is much less.</p>
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">Time Category</th>
+<th align="left">Time_Category</th>
 <th align="right">Total Delays</th>
 <th align="right">Average Delay Time (mins)</th>
 <th align="right">Average Number of Delays per Hour</th>
@@ -549,25 +547,26 @@ is much less.</p>
 <tbody>
 <tr class="odd">
 <td align="left">Non-Peak</td>
-<td align="right">15053</td>
-<td align="right">2.77</td>
-<td align="right">1075.214</td>
+<td align="right">3965</td>
+<td align="right">7.41</td>
+<td align="right">283.2143</td>
 </tr>
 <tr class="even">
 <td align="left">Peak</td>
-<td align="right">10089</td>
-<td align="right">3.03</td>
-<td align="right">1261.125</td>
+<td align="right">2535</td>
+<td align="right">7.01</td>
+<td align="right">316.8750</td>
 </tr>
 </tbody>
 </table>
 <p>Figure 4 shows the occurrence of delays distributed by the time of
 day at which they occur. The peak hours are based on the official TTC
 rush hour times when train service is increased. There is a significant
-jump in the number of delays during the rush hours as well as late at
-night at 11pm. What is interesting is that while the number of delays is
-much higher during peak hours, the average time of each delay is almost
-the same (they only differ by about 15 seconds).</p>
+jump in the number of delays during the rush hours with the highest
+delays occurring around 7am and 5pm. What is interesting is that while
+the number of delays is much higher during peak hours, the average time
+of each delay is almost the same (they only differ by about 15
+seconds).</p>
 </div>
 </div>
 <div id="summary" class="section level2">
