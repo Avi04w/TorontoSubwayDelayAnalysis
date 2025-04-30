@@ -33,8 +33,16 @@ source("eda.R")
 ### Delays Per Station
 
 ```{r}
-p1
-delay_causes <- delay_causes |> rename(`Delay Code` = `Code Description`)
+library(plotly)
+
+p1 <- ggplot(station_delays, aes(x = reorder(Station, Total_Delays), y = Total_Delays, fill = Line, text = paste("Station:", Station, "<br>Delays:", Total_Delays, "<br>Line:", Line))) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Total Number of Delays per Subway Station",
+       x = "Subway Station", y = "Number of Delays", fill = "Subway Line") +
+  theme_minimal()
+
+ggplotly(p1, tooltip = "text")
 ```
 
 From this, we can see that Kipling, Bloor, Kennedy, Eglinton, and Finch stations have the highest number of delays. These are all either transfer stations or are terminal stations (with the exception of Eglinton which is one of the busiest stations and the site of a future transfer station). We can also see that more Yonge-University line stations have have a large amount of delays, Kipling and Kennedy, which are are on the BD line have the most and third most delays. We can further look into this by exploring the types of delays that are occurring at stations.
@@ -42,8 +50,25 @@ From this, we can see that Kipling, Bloor, Kennedy, Eglinton, and Finch stations
 ### Reasons For Delay
 
 ```{r}
-p2
-kable(delay_causes, caption = "Top 10 Most Frequent Delay Causes")
+library(highcharter)
+
+delay_causes_treemap <- delay_causes |> 
+  mutate(name = `Code Description`,
+         value = Count,
+         avgDelay = `Average Delay Time`) |> 
+  select(name, value, avgDelay)  # Drop extra columns that may cause conflicts
+
+hchart(
+  type = "treemap",
+  delay_causes_treemap,
+  hcaes(x = name, value = value, color = value),
+  tooltip = list(
+    pointFormat = "<b>{point.name}</b><br>Count: {point.value}<br>Avg Delay: {point.avgDelay:.2f} mins"
+  )
+) |> 
+  hc_title(text = "Top 10 Reasons of Delay") |> 
+  hc_colorAxis(stops = color_stops(5, colors = c("indianred1", "indianred4"))) |> 
+  hc_chart(backgroundColor = "#fcfcfc")
 ```
 
 The top reasons for subway delays in Toronto seem to be passenger-related incidents, with "Disorderly Patron" being the most frequent cause, accounting for 887 delays with an average delay of 6.6 minutes. Other notable causes include Passenger Assistance Alarm Activation (652 delays, 4.1 min avg) and OPTO (COMMS) Train Door Monitoring (581 delays, 5.9 min avg).
@@ -51,10 +76,15 @@ The top reasons for subway delays in Toronto seem to be passenger-related incide
 ### Total Delay Time
 
 ```{r}
-p3
-delay_summary |> 
-  select(Code, `Code Description`) |> 
-  kable(caption = "Delay Code Definitions")
+p2 <- ggplot(delay_summary, aes(x = reorder(Code, Total_Delay_Time), y = Total_Delay_Time, fill = Total_Delay_Time, text = paste("Code:", Code, "<br>Description:", `Code Description`, "<br>Total Delay:", Total_Delay_Time, "min"))) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Top 10 Delay Causes by Total Delay Time",
+       x = "Delay Code", y = "Total Delay Time (Minutes)", fill = "Total Delay (min)") +
+  scale_fill_gradient(low = "indianred1", high = "indianred4") +
+  theme_minimal()
+
+ggplotly(p2, tooltip = "text")
 ```
 
 The top delay causes by total delay time highlight disorderly patrons as the most significant issue, causing over 5,000 minutes of delays throughout the year. Other major contributors include unauthorized people at track level, and injured or ill customers, each accumulating several hundred minutes of delays. Passenger-related incidents, including assaults, alarms, and other disruptions, collectively contribute to substantial downtime. The difference we see with this and the last visualization is that a few of the most commonly occurring delays, such as the passenger alarm being activated and unsanitary vehicle are not in the top 10 of total delay time since the average time for those delays is much less.

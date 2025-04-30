@@ -13,6 +13,8 @@ output:
 
 [GitHub Repository: Avi04w/TTC-Subway-Delays](https://github.com/Avi04w/TTC-Subway-Delays)
 
+[PDF Report](Final_Report/Toronto-Subway-Delay-Analysis.pdf)
+
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(eval=T, echo=F, warning=F, message=F)
 ```

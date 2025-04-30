@@ -33,6 +33,55 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+<script src="site_libs/proj4js-2.3.15/proj4.js"></script>
+<link href="site_libs/highcharts-9.3.1/css/motion.css" rel="stylesheet" />
+<script src="site_libs/highcharts-9.3.1/highcharts.js"></script>
+<script src="site_libs/highcharts-9.3.1/highcharts-3d.js"></script>
+<script src="site_libs/highcharts-9.3.1/highcharts-more.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/stock.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/map.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/data.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/exporting.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/offline-exporting.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/drilldown.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/item-series.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/overlapping-datalabels.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/annotations.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/export-data.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/funnel.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/heatmap.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/treemap.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/sankey.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/dependency-wheel.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/organization.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/solid-gauge.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/streamgraph.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/sunburst.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/vector.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/wordcloud.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/xrange.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/tilemap.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/venn.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/gantt.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/timeline.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/parallel-coordinates.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/bullet.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/coloraxis.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/dumbbell.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/lollipop.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/series-label.js"></script>
+<script src="site_libs/highcharts-9.3.1/plugins/motion.js"></script>
+<script src="site_libs/highcharts-9.3.1/custom/reset.js"></script>
+<script src="site_libs/highcharts-9.3.1/modules/boost.js"></script>
+<script src="site_libs/highchart-binding-0.9.4/highchart.js"></script>
 <link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -367,7 +416,8 @@ station.</li>
 <h2 class="tabset">Prelimary Results</h2>
 <div id="delays-per-station" class="section level3">
 <h3>Delays Per Station</h3>
-<p><img src="eda_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-4dbf8ce22e324d286bca" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-4dbf8ce22e324d286bca">{"x":{"data":[{"orientation":"h","width":[0.89999999999999858,0.89999999999999858,0.89999999999999947,0.90000000000000013],"base":[0,0,0,0],"x":[350,349,185,150],"y":[20,18,8,2],"text":["Station: KENNEDY BD STATION <br>Delays: 350 <br>Line: BD","Station: KIPLING STATION <br>Delays: 349 <br>Line: BD","Station: YONGE BD STATION <br>Delays: 185 <br>Line: BD","Station: COXWELL STATION <br>Delays: 150 <br>Line: BD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"BD","legendgroup":"BD","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":[0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.89999999999999991],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[350,325,312,239,237,219,206,204,198,189,183,172,155,153,152,150],"y":[19,17,16,15,14,13,12,11,10,9,7,6,5,4,3,1],"text":["Station: BLOOR STATION <br>Delays: 350 <br>Line: YU","Station: EGLINTON STATION <br>Delays: 325 <br>Line: YU","Station: FINCH STATION <br>Delays: 312 <br>Line: YU","Station: DAVISVILLE STATION <br>Delays: 239 <br>Line: YU","Station: WILSON STATION <br>Delays: 237 <br>Line: YU","Station: UNION STATION <br>Delays: 219 <br>Line: YU","Station: ST CLAIR STATION <br>Delays: 206 <br>Line: YU","Station: VAUGHAN MC STATION <br>Delays: 204 <br>Line: YU","Station: DUNDAS STATION <br>Delays: 198 <br>Line: YU","Station: ST GEORGE YUS STATION <br>Delays: 189 <br>Line: YU","Station: LAWRENCE STATION <br>Delays: 183 <br>Line: YU","Station: YORK MILLS STATION <br>Delays: 172 <br>Line: YU","Station: ROSEDALE STATION <br>Delays: 155 <br>Line: YU","Station: SHEPPARD STATION <br>Delays: 153 <br>Line: YU","Station: WELLESLEY STATION <br>Delays: 152 <br>Line: YU","Station: COLLEGE STATION <br>Delays: 150 <br>Line: YU"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"YU","legendgroup":"YU","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":40.182648401826498,"l":148.31050228310505},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Total Number of Delays per Subway Station","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-17.5,367.5],"tickmode":"array","ticktext":["0","100","200","300"],"tickvals":[0,100,200,300],"categoryorder":"array","categoryarray":["0","100","200","300"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Number of Delays","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,20.600000000000001],"tickmode":"array","ticktext":["COLLEGE STATION","COXWELL STATION","WELLESLEY STATION","SHEPPARD STATION","ROSEDALE STATION","YORK MILLS STATION","LAWRENCE STATION","YONGE BD STATION","ST GEORGE YUS STATION","DUNDAS STATION","VAUGHAN MC STATION","ST CLAIR STATION","UNION STATION","WILSON STATION","DAVISVILLE STATION","FINCH STATION","EGLINTON STATION","KIPLING STATION","BLOOR STATION","KENNEDY BD STATION"],"tickvals":[1,2,3,4.0000000000000009,5,6.0000000000000009,7,8,9,10,11,12.000000000000002,13,14.000000000000002,15,16,17,18,19,20],"categoryorder":"array","categoryarray":["COLLEGE STATION","COXWELL STATION","WELLESLEY STATION","SHEPPARD STATION","ROSEDALE STATION","YORK MILLS STATION","LAWRENCE STATION","YONGE BD STATION","ST GEORGE YUS STATION","DUNDAS STATION","VAUGHAN MC STATION","ST CLAIR STATION","UNION STATION","WILSON STATION","DAVISVILLE STATION","FINCH STATION","EGLINTON STATION","KIPLING STATION","BLOOR STATION","KENNEDY BD STATION"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Subway Station","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Subway Line","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"6991624387f8":{"x":{},"y":{},"fill":{},"text":{},"type":"bar"}},"cur_data":"6991624387f8","visdat":{"6991624387f8":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>From this, we can see that Kipling, Bloor, Kennedy, Eglinton, and
 Finch stations have the highest number of delays. These are all either
 transfer stations or are terminal stations (with the exception of
@@ -380,76 +430,8 @@ occurring at stations.</p>
 </div>
 <div id="reasons-for-delay" class="section level3">
 <h3>Reasons For Delay</h3>
-<p><img src="eda_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<table style="width:100%;">
-<caption>Top 10 Most Frequent Delay Causes</caption>
-<colgroup>
-<col width="69%" />
-<col width="7%" />
-<col width="23%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Delay Code</th>
-<th align="right">Count</th>
-<th align="right">Average Delay Time</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Disorderly Patron</td>
-<td align="right">887</td>
-<td align="right">6.603157</td>
-</tr>
-<tr class="even">
-<td align="left">Passenger Assistance Alarm Activated - No Trouble
-Found</td>
-<td align="right">652</td>
-<td align="right">4.101227</td>
-</tr>
-<tr class="odd">
-<td align="left">OPTO (COMMS) Train Door Monitoring</td>
-<td align="right">581</td>
-<td align="right">5.922547</td>
-</tr>
-<tr class="even">
-<td align="left">Passenger Other</td>
-<td align="right">422</td>
-<td align="right">9.592417</td>
-</tr>
-<tr class="odd">
-<td align="left">Injured or ill Customer (On Train) - Medical Aid
-Refused</td>
-<td align="right">411</td>
-<td align="right">6.503650</td>
-</tr>
-<tr class="even">
-<td align="left">Unsanitary Vehicle</td>
-<td align="right">312</td>
-<td align="right">4.762821</td>
-</tr>
-<tr class="odd">
-<td align="left">Injured or ill Customer (On Train) - Transported</td>
-<td align="right">256</td>
-<td align="right">11.015625</td>
-</tr>
-<tr class="even">
-<td align="left">Unauthorized at Track Level</td>
-<td align="right">256</td>
-<td align="right">13.257812</td>
-</tr>
-<tr class="odd">
-<td align="left">Transportation Department - Other</td>
-<td align="right">180</td>
-<td align="right">6.172222</td>
-</tr>
-<tr class="even">
-<td align="left">ATC Project</td>
-<td align="right">167</td>
-<td align="right">5.389222</td>
-</tr>
-</tbody>
-</table>
+<div class="highchart html-widget html-fill-item" id="htmlwidget-4d065bc5abdf1a93d762" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-4d065bc5abdf1a93d762">{"x":{"hc_opts":{"chart":{"reflow":true,"backgroundColor":"#fcfcfc"},"title":{"text":"Top 10 Reasons of Delay"},"yAxis":{"title":{"text":[]},"type":"linear"},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0,"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"scatter":{"marker":{"symbol":"circle"}}},"colorAxis":{"stops":[[0,"#FF6A6A"],[0.25,"#E25E5E"],[0.5,"#C45252"],[0.75,"#A84646"],[1,"#8B3A3A"]]},"series":[{"group":"group","data":[{"name":"Disorderly Patron","value":887,"avgDelay":6.603156708004509,"colorValue":887},{"name":"Passenger Assistance Alarm Activated - No Trouble Found","value":652,"avgDelay":4.101226993865031,"colorValue":652},{"name":"OPTO (COMMS) Train Door Monitoring","value":581,"avgDelay":5.922547332185887,"colorValue":581},{"name":"Passenger Other","value":422,"avgDelay":9.592417061611375,"colorValue":422},{"name":"Injured or ill Customer (On Train) - Medical Aid Refused","value":411,"avgDelay":6.503649635036497,"colorValue":411},{"name":"Unsanitary Vehicle","value":312,"avgDelay":4.762820512820513,"colorValue":312},{"name":"Injured or ill Customer (On Train) - Transported","value":256,"avgDelay":11.015625,"colorValue":256},{"name":"Unauthorized at Track Level","value":256,"avgDelay":13.2578125,"colorValue":256},{"name":"Transportation Department - Other","value":180,"avgDelay":6.172222222222222,"colorValue":180},{"name":"ATC Project","value":167,"avgDelay":5.389221556886228,"colorValue":167}],"type":"treemap","tooltip":{"pointFormat":"<b>{point.name}<\/b><br>Count: {point.value}<br>Avg Delay: {point.avgDelay:.2f} mins"}}],"xAxis":{"type":"category","title":{"text":"name"},"categories":null}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
 <p>The top reasons for subway delays in Toronto seem to be
 passenger-related incidents, with “Disorderly Patron” being the most
 frequent cause, accounting for 887 delays with an average delay of 6.6
@@ -459,60 +441,8 @@ Monitoring (581 delays, 5.9 min avg).</p>
 </div>
 <div id="total-delay-time" class="section level3">
 <h3>Total Delay Time</h3>
-<p><img src="eda_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<table>
-<caption>Delay Code Definitions</caption>
-<thead>
-<tr class="header">
-<th align="left">Code</th>
-<th align="left">Code Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">SUDP</td>
-<td align="left">Disorderly Patron</td>
-</tr>
-<tr class="even">
-<td align="left">SUO</td>
-<td align="left">Passenger Other</td>
-</tr>
-<tr class="odd">
-<td align="left">PUOPO</td>
-<td align="left">OPTO (COMMS) Train Door Monitoring</td>
-</tr>
-<tr class="even">
-<td align="left">SUUT</td>
-<td align="left">Unauthorized at Track Level</td>
-</tr>
-<tr class="odd">
-<td align="left">MUI</td>
-<td align="left">Injured or ill Customer (On Train) - Transported</td>
-</tr>
-<tr class="even">
-<td align="left">MUPAA</td>
-<td align="left">Passenger Assistance Alarm Activated - No Trouble
-Found</td>
-</tr>
-<tr class="odd">
-<td align="left">MUIR</td>
-<td align="left">Injured or ill Customer (On Train) - Medical Aid
-Refused</td>
-</tr>
-<tr class="even">
-<td align="left">MUSAN</td>
-<td align="left">Unsanitary Vehicle</td>
-</tr>
-<tr class="odd">
-<td align="left">MUPLB</td>
-<td align="left">Fire/Smoke Plan B - Source TTC</td>
-</tr>
-<tr class="even">
-<td align="left">TUO</td>
-<td align="left">Transportation Department - Other</td>
-</tr>
-</tbody>
-</table>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-0aed389c9e5eeaf2b5c4" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-0aed389c9e5eeaf2b5c4">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[1111],"y":[1],"text":"Code: TUO <br>Description: Transportation Department - Other <br>Total Delay: 1111 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,106,106,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[1303],"y":[2],"text":"Code: MUPLB <br>Description: Fire/Smoke Plan B - Source TTC <br>Total Delay: 1303 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(250,104,104,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[1486],"y":[3],"text":"Code: MUSAN <br>Description: Unsanitary Vehicle <br>Total Delay: 1486 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(245,102,102,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[2673],"y":[4],"text":"Code: MUIR <br>Description: Injured or ill Customer (On Train) - Medical Aid Refused <br>Total Delay: 2673 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(215,90,90,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[2674],"y":[5],"text":"Code: MUPAA <br>Description: Passenger Assistance Alarm Activated - No Trouble Found <br>Total Delay: 2674 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(215,90,90,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[2820],"y":[6],"text":"Code: MUI <br>Description: Injured or ill Customer (On Train) - Transported <br>Total Delay: 2820 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(212,88,88,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[3394],"y":[7],"text":"Code: SUUT <br>Description: Unauthorized at Track Level <br>Total Delay: 3394 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(198,82,82,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999947,"base":0,"x":[3441],"y":[8],"text":"Code: PUOPO <br>Description: OPTO (COMMS) Train Door Monitoring <br>Total Delay: 3441 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(196,82,82,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[4048],"y":[9],"text":"Code: SUO <br>Description: Passenger Other <br>Total Delay: 4048 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(182,76,76,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[5857],"y":[10],"text":"Code: SUDP <br>Description: Disorderly Patron <br>Total Delay: 5857 min","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(139,58,58,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[0],"name":"3e50352d8277b01af42af39a5fa510f7","type":"scatter","mode":"markers","opacity":0,"hoverinfo":"skip","showlegend":false,"marker":{"color":[0,1],"colorscale":[[0,"#FF6A6A"],[0.0033444816053511666,"#FF6A6A"],[0.0066889632107023332,"#FE6A6A"],[0.0100334448160535,"#FE6969"],[0.013377926421404666,"#FD6969"],[0.016722408026755831,"#FD6969"],[0.020066889632107,"#FD6969"],[0.023411371237458213,"#FC6969"],[0.026755852842809381,"#FC6969"],[0.030100334448160546,"#FB6868"],[0.033444816053511711,"#FB6868"],[0.03678929765886288,"#FB6868"],[0.040133779264214048,"#FA6868"],[0.043478260869565216,"#FA6868"],[0.046822742474916378,"#F96868"],[0.050167224080267546,"#F96767"],[0.053511705685618714,"#F86767"],[0.056856187290969883,"#F86767"],[0.060200668896321093,"#F86767"],[0.063545150501672254,"#F76767"],[0.066889632107023422,"#F76767"],[0.070234113712374591,"#F66666"],[0.073578595317725759,"#F66666"],[0.076923076923076927,"#F66666"],[0.080267558528428096,"#F56666"],[0.083612040133779264,"#F56666"],[0.086956521739130432,"#F46666"],[0.090301003344481587,"#F46565"],[0.093645484949832755,"#F46565"],[0.096989966555183979,"#F36565"],[0.10033444816053509,"#F36565"],[0.1036789297658863,"#F26565"],[0.10702341137123747,"#F26565"],[0.11036789297658864,"#F26464"],[0.11371237458193981,"#F16464"],[0.11705685618729098,"#F16464"],[0.12040133779264214,"#F06464"],[0.12374581939799331,"#F06464"],[0.12709030100334451,"#F06464"],[0.13043478260869565,"#EF6363"],[0.13377926421404684,"#EF6363"],[0.13712374581939799,"#EE6363"],[0.14046822742474918,"#EE6363"],[0.14381270903010029,"#EE6363"],[0.14715719063545152,"#ED6363"],[0.15050167224080269,"#ED6262"],[0.15384615384615385,"#EC6262"],[0.15719063545150502,"#EC6262"],[0.16053511705685619,"#EC6262"],[0.16387959866220736,"#EB6262"],[0.16722408026755853,"#EB6262"],[0.17056856187290972,"#EA6161"],[0.17391304347826086,"#EA6161"],[0.17725752508361206,"#EA6161"],[0.18060200668896317,"#E96161"],[0.1839464882943144,"#E96161"],[0.18729096989966557,"#E86161"],[0.19063545150501673,"#E86160"],[0.1939799331103679,"#E86060"],[0.19732441471571907,"#E76060"],[0.20066889632107018,"#E76060"],[0.20401337792642141,"#E66060"],[0.2073578595317726,"#E66060"],[0.21070234113712374,"#E6605F"],[0.21404682274247494,"#E55F5F"],[0.21739130434782616,"#E55F5F"],[0.22073578595317728,"#E45F5F"],[0.22408026755852839,"#E45F5F"],[0.22742474916387961,"#E45F5F"],[0.23076923076923084,"#E35F5F"],[0.23411371237458195,"#E35E5E"],[0.23745819397993306,"#E25E5E"],[0.24080267558528429,"#E25E5E"],[0.24414715719063548,"#E25E5E"],[0.24749163879598662,"#E15E5E"],[0.25083612040133774,"#E15E5E"],[0.25418060200668902,"#E05D5D"],[0.25752508361204018,"#E05D5D"],[0.2608695652173913,"#E05D5D"],[0.26421404682274252,"#DF5D5D"],[0.26755852842809369,"#DF5D5D"],[0.2709030100334448,"#DE5D5D"],[0.27424749163879597,"#DE5C5C"],[0.27759197324414714,"#DE5C5C"],[0.28093645484949836,"#DD5C5C"],[0.28428093645484948,"#DD5C5C"],[0.28762541806020059,"#DC5C5C"],[0.29096989966555181,"#DC5C5C"],[0.29431438127090304,"#DC5B5B"],[0.29765886287625415,"#DB5B5B"],[0.30100334448160537,"#DB5B5B"],[0.3043478260869566,"#DA5B5B"],[0.30769230769230771,"#DA5B5B"],[0.31103678929765882,"#DA5B5B"],[0.31438127090301005,"#D95A5A"],[0.31772575250836127,"#D95A5A"],[0.32107023411371238,"#D85A5A"],[0.3244147157190635,"#D85A5A"],[0.32775919732441472,"#D85A5A"],[0.33110367892976594,"#D75A5A"],[0.33444816053511706,"#D75959"],[0.33779264214046828,"#D65959"],[0.34113712374581945,"#D65959"],[0.34448160535117056,"#D65959"],[0.34782608695652173,"#D55959"],[0.3511705685618729,"#D55959"],[0.35451505016722412,"#D45858"],[0.35785953177257523,"#D45858"],[0.36120401337792635,"#D45858"],[0.36454849498327757,"#D35858"],[0.3678929765886288,"#D35858"],[0.37123745819397991,"#D25858"],[0.37458193979933113,"#D25757"],[0.37792642140468236,"#D25757"],[0.38127090301003347,"#D15757"],[0.38461538461538458,"#D15757"],[0.38795986622073581,"#D05757"],[0.39130434782608703,"#D05757"],[0.39464882943143814,"#D05756"],[0.39799331103678925,"#CF5656"],[0.40133779264214048,"#CF5656"],[0.4046822742474917,"#CF5656"],[0.40802675585284282,"#CE5656"],[0.41137123745819404,"#CE5656"],[0.41471571906354521,"#CD5656"],[0.41806020066889632,"#CD5555"],[0.42140468227424749,"#CD5555"],[0.42474916387959866,"#CC5555"],[0.42809364548494988,"#CC5555"],[0.43143812709030099,"#CB5555"],[0.43478260869565222,"#CB5555"],[0.43812709030100333,"#CB5454"],[0.44147157190635455,"#CA5454"],[0.44481605351170567,"#CA5454"],[0.44816053511705689,"#C95454"],[0.451505016722408,"#C95454"],[0.45484949832775923,"#C95454"],[0.45819397993311034,"#C85353"],[0.46153846153846156,"#C85353"],[0.46488294314381268,"#C75353"],[0.4682274247491639,"#C75353"],[0.47157190635451512,"#C75353"],[0.47491638795986624,"#C65353"],[0.47826086956521746,"#C65252"],[0.48160535117056857,"#C65252"],[0.4849498327759198,"#C55252"],[0.48829431438127091,"#C55252"],[0.49163879598662213,"#C45252"],[0.49498327759197325,"#C45252"],[0.49832775919732442,"#C45151"],[0.50167224080267558,"#C35151"],[0.50501672240802675,"#C35151"],[0.50836120401337803,"#C25151"],[0.51170568561872909,"#C25151"],[0.51505016722408037,"#C25151"],[0.51839464882943143,"#C15151"],[0.52173913043478271,"#C15050"],[0.52508361204013376,"#C05050"],[0.52842809364548504,"#C05050"],[0.5317725752508361,"#C05050"],[0.53511705685618727,"#BF5050"],[0.53846153846153844,"#BF5050"],[0.5418060200668896,"#BF4F4F"],[0.54515050167224088,"#BE4F4F"],[0.54849498327759194,"#BE4F4F"],[0.55183946488294322,"#BD4F4F"],[0.55518394648829428,"#BD4F4F"],[0.55852842809364556,"#BD4F4F"],[0.56187290969899661,"#BC4E4E"],[0.56521739130434789,"#BC4E4E"],[0.56856187290969895,"#BB4E4E"],[0.57190635451505023,"#BB4E4E"],[0.57525083612040129,"#BB4E4E"],[0.57859531772575257,"#BA4E4E"],[0.58193979933110362,"#BA4D4D"],[0.5852842809364549,"#BA4D4D"],[0.58862876254180607,"#B94D4D"],[0.59197324414715724,"#B94D4D"],[0.59531772575250841,"#B84D4D"],[0.59866220735785958,"#B84D4D"],[0.60200668896321075,"#B84D4D"],[0.60535117056856191,"#B74C4C"],[0.60869565217391308,"#B74C4C"],[0.61204013377926425,"#B64C4C"],[0.61538461538461542,"#B64C4C"],[0.61872909698996659,"#B64C4C"],[0.62207357859531776,"#B54C4C"],[0.62541806020066892,"#B54B4B"],[0.62876254180602009,"#B54B4B"],[0.63210702341137115,"#B44B4B"],[0.63545150501672254,"#B44B4B"],[0.6387959866220736,"#B34B4B"],[0.64214046822742477,"#B34B4B"],[0.64548494983277604,"#B34A4A"],[0.64882943143812699,"#B24A4A"],[0.65217391304347827,"#B24A4A"],[0.65551839464882944,"#B14A4A"],[0.6588628762541805,"#B14A4A"],[0.66220735785953189,"#B14A4A"],[0.66555183946488294,"#B04A4A"],[0.66889632107023411,"#B04949"],[0.67224080267558539,"#B04949"],[0.67558528428093656,"#AF4949"],[0.67892976588628762,"#AF4949"],[0.6822742474916389,"#AE4949"],[0.68561872909698984,"#AE4949"],[0.68896321070234112,"#AE4848"],[0.69230769230769229,"#AD4848"],[0.69565217391304346,"#AD4848"],[0.69899665551839474,"#AD4848"],[0.7023411371237458,"#AC4848"],[0.70568561872909696,"#AC4848"],[0.70903010033444824,"#AB4747"],[0.71237458193979941,"#AB4747"],[0.71571906354515047,"#AB4747"],[0.71906354515050186,"#AA4747"],[0.72240802675585269,"#AA4747"],[0.72575250836120409,"#A94747"],[0.72909698996655514,"#A94747"],[0.73244147157190631,"#A94646"],[0.73578595317725759,"#A84646"],[0.73913043478260876,"#A84646"],[0.74247491638795982,"#A84646"],[0.7458193979933111,"#A74646"],[0.74916387959866226,"#A74646"],[0.75250836120401343,"#A64545"],[0.75585284280936471,"#A64545"],[0.75919732441471566,"#A64545"],[0.76254180602006694,"#A54545"],[0.76588628762541811,"#A54545"],[0.76923076923076916,"#A54545"],[0.77257525083612044,"#A44444"],[0.77591973244147161,"#A44444"],[0.77926421404682267,"#A34444"],[0.78260869565217406,"#A34444"],[0.78595317725752512,"#A34444"],[0.78929765886287628,"#A24444"],[0.79264214046822756,"#A24444"],[0.79598662207357851,"#A24343"],[0.79933110367892979,"#A14343"],[0.80267558528428096,"#A14343"],[0.80602006688963201,"#A04343"],[0.8093645484949834,"#A04343"],[0.81270903010033446,"#A04343"],[0.81605351170568563,"#9F4242"],[0.81939799331103691,"#9F4242"],[0.82274247491638808,"#9F4242"],[0.82608695652173914,"#9E4242"],[0.82943143812709041,"#9E4242"],[0.83277591973244136,"#9D4242"],[0.83612040133779264,"#9D4242"],[0.83946488294314381,"#9D4141"],[0.84280936454849498,"#9C4141"],[0.84615384615384626,"#9C4141"],[0.84949832775919731,"#9C4141"],[0.85284280936454848,"#9B4141"],[0.85618729096989976,"#9B4141"],[0.85953177257525093,"#9A4040"],[0.86287625418060199,"#9A4040"],[0.86622073578595316,"#9A4040"],[0.86956521739130443,"#994040"],[0.8729096989966556,"#994040"],[0.87625418060200666,"#994040"],[0.87959866220735783,"#984040"],[0.88294314381270911,"#983F3F"],[0.88628762541806028,"#983F3F"],[0.88963210702341133,"#973F3F"],[0.8929765886287625,"#973F3F"],[0.89632107023411378,"#963F3F"],[0.89966555183946495,"#963F3F"],[0.90301003344481601,"#963E3E"],[0.90635451505016729,"#953E3E"],[0.90969899665551845,"#953E3E"],[0.91304347826086962,"#953E3E"],[0.91638795986622068,"#943E3E"],[0.91973244147157196,"#943E3E"],[0.92307692307692313,"#933E3E"],[0.92642140468227419,"#933D3D"],[0.92976588628762535,"#933D3D"],[0.93311036789297663,"#923D3D"],[0.9364548494983278,"#923D3D"],[0.93979933110367886,"#923D3D"],[0.94314381270903025,"#913D3D"],[0.94648829431438131,"#913C3C"],[0.94983277591973247,"#903C3C"],[0.95317725752508353,"#903C3C"],[0.95652173913043492,"#903C3C"],[0.95986622073578598,"#8F3C3C"],[0.96321070234113715,"#8F3C3C"],[0.96655518394648821,"#8F3C3C"],[0.9698996655518396,"#8E3B3B"],[0.97324414715719065,"#8E3B3B"],[0.97658862876254182,"#8E3B3B"],[0.9799331103678931,"#8D3B3B"],[0.98327759197324427,"#8D3B3B"],[0.98662207357859533,"#8C3B3B"],[0.98996655518394649,"#8C3A3A"],[0.99331103678929777,"#8C3A3A"],[0.99665551839464883,"#8B3A3A"],[1,"#8B3A3A"]],"colorbar":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"thickness":23.039999999999996,"title":"Total Delay (min)","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"tickmode":"array","ticktext":["2000","3000","4000","5000"],"tickvals":[0.18835791543756145,0.39835932012923159,0.60836072482090187,0.81836212951257203],"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"ticklen":2,"len":0.5}},"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":40.182648401826498,"l":54.794520547945211},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Top 10 Delay Causes by Total Delay Time","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-292.85000000000002,6149.8500000000004],"tickmode":"array","ticktext":["0","2000","4000","6000"],"tickvals":[0,2000,4000.0000000000005,6000],"categoryorder":"array","categoryarray":["0","2000","4000","6000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Total Delay Time (Minutes)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,10.6],"tickmode":"array","ticktext":["TUO","MUPLB","MUSAN","MUIR","MUPAA","MUI","SUUT","PUOPO","SUO","SUDP"],"tickvals":[1,2,3,4,5,6.0000000000000009,7,8,9,10],"categoryorder":"array","categoryarray":["TUO","MUPLB","MUSAN","MUIR","MUPAA","MUI","SUUT","PUOPO","SUO","SUDP"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Delay Code","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Total Delay (min)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"69915addb7eb":{"x":{},"y":{},"fill":{},"text":{},"type":"bar"}},"cur_data":"69915addb7eb","visdat":{"69915addb7eb":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>The top delay causes by total delay time highlight disorderly patrons
 as the most significant issue, causing over 5,000 minutes of delays
 throughout the year. Other major contributors include unauthorized
