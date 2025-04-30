@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Avi Walia" />
+
+<meta name="date" content="2025-03-14" />
+
+<title>Toronto Subway Delay Analysis: Causes, Timing, and Line-Specific Patterns</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">JSC370 Final Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="eda.html">EDA</a>
+</li>
+<li>
+  <a href="prediction.html">Predictive Modelling</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/Avi04w/JSC-Website">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Toronto Subway Delay Analysis: Causes,
+Timing, and Line-Specific Patterns</h1>
+<h4 class="author">Avi Walia</h4>
+<h4 class="date">March 14, 2025</h4>
+
+</div>
+
+
+<p><a href="https://github.com/Avi04w/TTC-Subway-Delays">GitHub
+Repository: Avi04w/TTC-Subway-Delays</a></p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The Toronto Transit Commission (TTC) subway system is a critical part
+of Toronto’s public transportation network, servicing over a million
+riders daily across multiple lines. However, subway delays have been a
+persistent issue, impacting the efficiency and reliability of the
+service. Understanding the primary causes of these delays and how they
+vary by time of day and across different subway lines is essential for
+improving service quality and enhancing passenger experience.</p>
+<p>This study aims to investigate the following questions:</p>
+<ol style="list-style-type: decimal">
+<li>What are the primary causes of subway delays in Toronto and how do
+these delays vary by subway line/station?</li>
+<li>Can we estimate the duration of subway delays across Toronto’s TTC
+system based on different predictors?</li>
+</ol>
+<p><strong>Hypothesis:</strong></p>
+<p><strong>Question 1:</strong></p>
+<ul>
+<li><strong>Hypothesis 1:</strong> Mechanical issues are the most common
+causes of subway delays in Toronto.</li>
+<li><strong>Hypothesis 2:</strong> Delays are more frequent during peak
+hours (7-9 AM and 3-7 PM) compared to non-peak hours.</li>
+<li><strong>Hypothesis 3:</strong> The Yonge-University line experiences
+more frequent delays than other lines due to higher passenger volumes
+and longer track lengths. Bloor-Yonge and Union stations will have the
+most and longest delays on this line since they are the most crowded
+stations in terms of ridership.</li>
+</ul>
+<p><strong>Question 2:</strong></p>
+<ul>
+<li><strong>Hypothesis:</strong> I believe that the model we fit to
+predict length of delays will depend on: station, type of delay, hour of
+day, and weather.</li>
+</ul>
+<p>To address these questions and test the hypotheses, we will utilize
+the TTC Subway Delay Data provided by the City of Toronto’s Open Data
+portal as well as the Open-Meteo API to get Toronto weather data. The
+TTC dataset contains detailed information on delay incidents for the
+year 2024, including:</p>
+<ul>
+<li><strong>Delay Codes</strong> and their descriptions indicating the
+reasons for delays.</li>
+<li><strong>Time Stamp Information</strong> such as date, time, and day
+of the week.</li>
+<li><strong>Location Details</strong> including the station and subway
+line affected.</li>
+<li><strong>Duration of Delays</strong> measured in minutes.</li>
+</ul>
+<p>The data was acquired using the City’s Open Data API. By exploring
+and analyzing this dataset, we seek to identify patterns and trends in
+delay causes, assess peak times for delays, and determine if specific
+lines and/or stations are more prone to certain types of delays. This
+analysis will inform potential strategies for mitigating delays and
+improving the TTC’s operational efficiency.</p>
+<p>The OpenMeteo data contains:</p>
+<ul>
+<li><strong>Temperature:</strong> Hourly temperature data (in
+Celsius).</li>
+<li><strong>Precipitation:</strong> Hourly precipitation (rain and
+snowfall in mm).</li>
+</ul>
+<p>The data was acquired from the Open-Meteo Archive Data API. The API
+was called with the geographical coordinates for Toronto and contains
+hourly weather data for the city. The data will be used in a predictive
+model to answer Question 2.</p>
+</div>
+<div id="methods" class="section level1">
+<h1>Methods</h1>
+<div id="data-acquisition" class="section level3">
+<h3>Data Acquisition</h3>
+<p>The dataset used in this analysis was obtained from the City of
+Toronto Open Data Portal using the Open Data API. The data includes all
+recorded subway delays in Toronto for the year 2024, along with the
+delay codes, time, location, and other metadata. Additionally, a delay
+code definitions dataset was obtained from the same API and this was
+merged with the original data to provide description of each delay type.
+Weather data was included from the Open-Meteo API as mentioned
+above.</p>
+<p>The extracted data includes:</p>
+<ul>
+<li><strong>Time Stamp Information</strong> (Date, Time, Day of Week,
+Hour of Delay)</li>
+<li><strong>Location Details</strong> (Station, Subway Line, Direction
+of Train)</li>
+<li><strong>Delay Duration</strong> (Minutes Delayed)</li>
+<li><strong>Delay Cause</strong> (Codes and Descriptions)</li>
+<li><strong>Subway Car Details</strong> (Vehicle ID)</li>
+<li><strong>Weather Data</strong> (Temperature, Precipitation)</li>
+</ul>
+</div>
+<div id="data-cleaning-and-wrangling" class="section level3">
+<h3>Data Cleaning and Wrangling</h3>
+<p>Several process steps were applied to clean and prepare the data for
+analysis.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Filtering Out Non-Delays and Multi-Station Delays</strong>
+<ul>
+<li>Some records had a delay of 0 minutes (or None). We are not
+interested in these incidents as they do not actually effect commute
+times for riders. This removed many of the columns with missing
+values.</li>
+<li>Some delays were TTC wide or spanned multiple stations. We did not
+include these as there is no way to pinpoint the cause of these delays.
+This was done using REGEX to remove values that included “TO”, “TOWARD”,
+or “-”.</li>
+</ul></li>
+<li><strong>Handling Missing Values:</strong>
+<ul>
+<li>The rest of the columns with missing information were removed.</li>
+</ul></li>
+<li><strong>Column Type Formatting:</strong>
+<ul>
+<li>The Minutes Delayed was a char column, this was converted to
+int</li>
+<li>The Time column was originally formatted as <strong>HH:MM</strong>
+and was converted to hms.</li>
+<li>The Date column was converted from a character to Datetime.</li>
+<li>An extra categorical column was added, distinguishing between peak
+and non-peak times.</li>
+</ul></li>
+<li><strong>Merging Delay Codes Information</strong>
+<ul>
+<li>The delay codes were matched with their corresponding descriptions
+from the delay code definitions dataset.</li>
+<li>The weather data at the time of each delay was also included. The
+data for the exact time is not the data set, however, it could be merged
+based on the floor of the delay time (if the delay happened at 4:24 PM,
+we got the weather data for 4:00 PM).</li>
+</ul></li>
+<li><strong>Erroneous Data and Outliers</strong>
+<ul>
+<li>There is some data that was incorrectly inputted. One such example
+is that Warden station is once listed as being on the Yonge-University
+Line when it is actually on the Bloor-Danforth Line.</li>
+<li>There is a delay that lasted 6 hours that started at 4am. This is a
+massive outlier that is not a common occurrence (or even happened a
+second time). We can ignore this point as it is not indicative of any
+trends that we are trying to find.</li>
+<li>Stations along the Sheppard line were not included as there are not
+enough observations to make significant conclusions about any
+results.</li>
+</ul></li>
+</ol>
+<p>There are 9178 observations and 16 variables for each
+observation.</p>
+</div>
+</div>
+<div id="question-1-delay-analysis" class="section level1">
+<h1>Question 1: Delay Analysis</h1>
+<div id="exploratory-data-analysis-eda" class="section level2">
+<h2>Exploratory Data Analysis (EDA)</h2>
+<p>To understand the nature of the subway delays, the following initial
+analyses were performed:</p>
+<ul>
+<li><strong>Summary Statistics:</strong>
+<ul>
+<li>Calculated the total number of delays and average delay duration at
+each station.</li>
+<li>Identified the most common delay causes and their frequency.</li>
+</ul></li>
+<li><strong>Visualizations:</strong>
+<ul>
+<li><strong>Treemap:</strong> Delay reasons visualized in proportional
+blocks.</li>
+<li><strong>Bar Chart:</strong> Number of delays per subway line and
+station.</li>
+</ul></li>
+<li><strong>Time-Based Analysis:</strong>
+<ul>
+<li>Created peak (7-9 AM, 3-7 PM) vs non-peak delay summaries.</li>
+<li>Examined how delay frequencies change by the hour.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="prelimary-results" class="section level1">
+<h1>Prelimary Results</h1>
+<p>We can first look at the total delays and average delay duration by
+station:</p>
+<table>
+<caption>Top 10 Stations with Most Delays</caption>
+<thead>
+<tr class="header">
+<th align="left">Station</th>
+<th align="right">Total Delays</th>
+<th align="right">Average Delay Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">KENNEDY BD STATION</td>
+<td align="right">353</td>
+<td align="right">5.968839</td>
+</tr>
+<tr class="even">
+<td align="left">KIPLING STATION</td>
+<td align="right">351</td>
+<td align="right">6.347578</td>
+</tr>
+<tr class="odd">
+<td align="left">BLOOR STATION</td>
+<td align="right">350</td>
+<td align="right">6.311429</td>
+</tr>
+<tr class="even">
+<td align="left">EGLINTON STATION</td>
+<td align="right">325</td>
+<td align="right">6.596923</td>
+</tr>
+<tr class="odd">
+<td align="left">FINCH STATION</td>
+<td align="right">312</td>
+<td align="right">6.631410</td>
+</tr>
+<tr class="even">
+<td align="left">DAVISVILLE STATION</td>
+<td align="right">242</td>
+<td align="right">8.033058</td>
+</tr>
+<tr class="odd">
+<td align="left">WILSON STATION</td>
+<td align="right">237</td>
+<td align="right">6.413502</td>
+</tr>
+<tr class="even">
+<td align="left">UNION STATION</td>
+<td align="right">219</td>
+<td align="right">6.643836</td>
+</tr>
+<tr class="odd">
+<td align="left">ST CLAIR STATION</td>
+<td align="right">207</td>
+<td align="right">6.830918</td>
+</tr>
+<tr class="even">
+<td align="left">VAUGHAN MC STATION</td>
+<td align="right">204</td>
+<td align="right">5.411765</td>
+</tr>
+</tbody>
+</table>
+<p><img src="Toronto-Subway-Delay-Analysis_files/figure-html/barchart-delays-stations-1.png" width="960" /></p>
+<p>From this, we can see that Kipling, Bloor, Kennedy, Eglinton, Finch,
+St George, and VMC stations have the highest number of delays. These are
+all either transfer stations or are terminal stations (with the
+exception of Eglinton which is one of the busiest stations and the site
+of a future transfer station). We can also see that more
+Yonge-University line stations have have a large amount of delays,
+Kipling and Kennedy, which are are on the BD line have the most and
+third most delays. We can further look into this by exploring the types
+of delays that are occurring at stations.</p>
+<table style="width:100%;">
+<caption>Top 10 Most Frequent Delay Causes</caption>
+<colgroup>
+<col width="69%" />
+<col width="7%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Code Description</th>
+<th align="right">Count</th>
+<th align="right">Average Delay Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Disorderly Patron</td>
+<td align="right">887</td>
+<td align="right">6.603157</td>
+</tr>
+<tr class="even">
+<td align="left">Passenger Assistance Alarm Activated - No Trouble
+Found</td>
+<td align="right">652</td>
+<td align="right">4.101227</td>
+</tr>
+<tr class="odd">
+<td align="left">OPTO (COMMS) Train Door Monitoring</td>
+<td align="right">581</td>
+<td align="right">5.922547</td>
+</tr>
+<tr class="even">
+<td align="left">Passenger Other</td>
+<td align="right">422</td>
+<td align="right">9.592417</td>
+</tr>
+<tr class="odd">
+<td align="left">Injured or ill Customer (On Train) - Medical Aid
+Refused</td>
+<td align="right">411</td>
+<td align="right">6.503650</td>
+</tr>
+<tr class="even">
+<td align="left">Unsanitary Vehicle</td>
+<td align="right">312</td>
+<td align="right">4.762821</td>
+</tr>
+<tr class="odd">
+<td align="left">Injured or ill Customer (On Train) - Transported</td>
+<td align="right">256</td>
+<td align="right">11.015625</td>
+</tr>
+<tr class="even">
+<td align="left">Unauthorized at Track Level</td>
+<td align="right">256</td>
+<td align="right">13.257812</td>
+</tr>
+<tr class="odd">
+<td align="left">Transportation Department - Other</td>
+<td align="right">180</td>
+<td align="right">6.172222</td>
+</tr>
+<tr class="even">
+<td align="left">ATC Project</td>
+<td align="right">167</td>
+<td align="right">5.389222</td>
+</tr>
+</tbody>
+</table>
+<p><img src="Toronto-Subway-Delay-Analysis_files/figure-html/treemap-delay-causes-1.png" width="960" /></p>
+<p>The top reasons for subway delays in Toronto seem to be
+passenger-related incidents, with “Disorderly Patron” being the most
+frequent cause, accounting for 157 delays with an average delay of 6.85
+minutes. Other notable causes include Passenger Assistance Alarm
+Activation (72 delays, 4.11 min avg) and OPTO (COMMS) Train Door
+Monitoring (50 delays, 6.9 min avg).</p>
+<p>We can also look at which delays took the most time total:</p>
+<p><img src="Toronto-Subway-Delay-Analysis_files/figure-html/total-delay-time-1.png" width="960" /></p>
+<table>
+<caption>Delay Code Definitions</caption>
+<thead>
+<tr class="header">
+<th align="left">Code</th>
+<th align="left">Code Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">SUDP</td>
+<td align="left">Disorderly Patron</td>
+</tr>
+<tr class="even">
+<td align="left">SUO</td>
+<td align="left">Passenger Other</td>
+</tr>
+<tr class="odd">
+<td align="left">PUOPO</td>
+<td align="left">OPTO (COMMS) Train Door Monitoring</td>
+</tr>
+<tr class="even">
+<td align="left">SUUT</td>
+<td align="left">Unauthorized at Track Level</td>
+</tr>
+<tr class="odd">
+<td align="left">MUI</td>
+<td align="left">Injured or ill Customer (On Train) - Transported</td>
+</tr>
+<tr class="even">
+<td align="left">MUPAA</td>
+<td align="left">Passenger Assistance Alarm Activated - No Trouble
+Found</td>
+</tr>
+<tr class="odd">
+<td align="left">MUIR</td>
+<td align="left">Injured or ill Customer (On Train) - Medical Aid
+Refused</td>
+</tr>
+<tr class="even">
+<td align="left">MUSAN</td>
+<td align="left">Unsanitary Vehicle</td>
+</tr>
+<tr class="odd">
+<td align="left">MUPLB</td>
+<td align="left">Fire/Smoke Plan B - Source TTC</td>
+</tr>
+<tr class="even">
+<td align="left">TUO</td>
+<td align="left">Transportation Department - Other</td>
+</tr>
+</tbody>
+</table>
+<p>The top delay causes by total delay time highlight disorderly patrons
+as the most significant issue, causing over 1,000 minutes of delays
+throughout the year. Other major contributors include unauthorized
+people at track level, and injured or ill customers, each accumulating
+several hundred minutes of delays. Passenger-related incidents,
+including assaults, alarms, and other disruptions, collectively
+contribute to substantial downtime. The difference we see with this and
+the last visualization is that a few of the most commonly occurring
+delays, such as the passenger alarm being activated and unsanitary
+vehicle are not in the top 10 of total delay time since the average time
+for those delays is much less.</p>
+<p>Finally, we can view the occurrence of delays distributed by the time
+of day at which they occur.</p>
+<table>
+<caption>Delays During Peak vs Non-Peak Hours</caption>
+<colgroup>
+<col width="19%" />
+<col width="18%" />
+<col width="26%" />
+<col width="35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Time_Category</th>
+<th align="right">Total Delays</th>
+<th align="right">Average Delay Time</th>
+<th align="right">Average Number of Delays</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Non-Peak</td>
+<td align="right">3965</td>
+<td align="right">7.41</td>
+<td align="right">283.2143</td>
+</tr>
+<tr class="even">
+<td align="left">Peak</td>
+<td align="right">2535</td>
+<td align="right">7.01</td>
+<td align="right">316.8750</td>
+</tr>
+</tbody>
+</table>
+<p><img src="Toronto-Subway-Delay-Analysis_files/figure-html/histogram-delays-hours-1.png" width="960" /></p>
+<p>There is no data for 3 and 4 am as the subway is closed for those
+hours. There is a major peak in the number of delays during the
+afternoon (between 2 and 4 pm), with the highest delays occurring around
+3pm. What is interesting is that while the number of delays is much
+higher during peak hours, the average time of each delay is almost the
+same.</p>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>This analysis of TTC subway delays has provided several key insights
+into delay causes, timing patterns, and station-specific trends. The
+most frequent delay and the delay that has wasted the most amount of
+time this year is <strong>Disorderly Patrons</strong>, accounting for
+157 recorded delays and taking a total of 1075.45 hours, much more than
+any other delay type. Other common delay types include passenger
+assistance alarms being activated, train door monitoring issues, and
+medical emergencies. However, when examining total delay time,
+disruptions such as unauthorized people at track level and injured or
+ill customer incidents accumulate significantly more system downtime,
+despite occurring less frequently.</p>
+<p>in terms of time-based patters, delays are more frequent during peak
+hours (7-9 AM, 3-7 PM) when the TTC is running more trains, with a
+noticeable spike at 3 PM. Interestingly, while peak hours have more
+delays, the average duration of each delay is similar to non-peak
+periods, suggestions that the nature of delays remains relatively
+consistent through the day. Additionally, certain stations such as
+Kipling, Bloor, Kennedy and Finch experience the highest number of
+delays, many of which are near major transfer or terminal stations.</p>
+</div>
+</div>
+<div id="question-2-predictive-modelling" class="section level1">
+<h1>Question 2: Predictive Modelling</h1>
+<p>In the second phase of this project, I aim to develop and compare
+multiple predictive models to estimate the duration of subway delays
+across Toronto’s TTC system. Building on prior exploratory findings, the
+objective is to quantify how factors such as time of day, subway line,
+station location, day of the week, and delay cause influence delay
+duration.</p>
+<p>The response variable will be delay duration (in minutes). Predictor
+variables will include:</p>
+<ul>
+<li><strong>Temporal Variables:</strong> Hour of the day, peak
+vs. non-peak, day of the week</li>
+<li><strong>Spatial Variables:</strong> Station name, subway line</li>
+<li><strong>Incident Characteristics:</strong> Delay cause (Passenger
+Related vs Non-Passenger Related)</li>
+</ul>
+<p>I will implement a variety of regression models including:</p>
+<ul>
+<li><strong>Linear Regression</strong> (as a baseline)</li>
+<li><strong>Generalized Additive Models</strong> (to capture non-linear
+temporal effects)</li>
+<li><strong>Random Forest and Gradient Boosting Models</strong> (to
+capture interactions and complex dependencies)</li>
+</ul>
+<p>Model performance will be evaluated using <strong>RMSE</strong>,
+<strong>MAE</strong>, and <span
+class="math inline">\(\textbf{R^2}\)</span> metrics on a holdout test
+set (80/20 split). This comparative analysis will identify the most
+suitable approach for forecasting subway delay durations and inform
+operational decision-making for delay mitigation strategies.</p>
+<p>We start by fitting a linear regression model as a baseline. Then, a
+Generalized Linear Model (GAM) is fit. We will have a smoothing factor
+on Hour since time-of-day effects can be non-linear as well as
+precipitation, since heavy rainfall and snowfall might have an
+exponentially larger effect. We will reduce the model to incorporate
+only significant variables. Finally, we will implement and compare
+several regression models using historical TTC delay data. Specifically,
+I will fit a linear regression, a generalized additive model (GAM), a
+random forest, and an XGBoost regressor, using predictors such as time
+of day, precipitation, station, subway line, day of the week, delay
+type, and peak hour classification. Model performance will be evaluated
+using RMSE, MAE, and R² metrics on a held-out test set. This comparative
+analysis will identify the most accurate and robust modeling approach
+for understanding and forecasting subway delays.</p>
+<p><img src="Toronto-Subway-Delay-Analysis_files/figure-html/unnamed-chunk-9-1.png" width="960" /></p>
+<table>
+<caption>Model Performance Summary (R², RMSE, MAE)</caption>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="right">R2</th>
+<th align="right">RMSE</th>
+<th align="right">MAE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Linear</td>
+<td align="right">0.0101</td>
+<td align="right">6.3200</td>
+<td align="right">4.0820</td>
+</tr>
+<tr class="even">
+<td align="left">GAM</td>
+<td align="right">0.0109</td>
+<td align="right">6.3207</td>
+<td align="right">4.0785</td>
+</tr>
+<tr class="odd">
+<td align="left">Random Forest</td>
+<td align="right">0.0120</td>
+<td align="right">6.2582</td>
+<td align="right">4.0799</td>
+</tr>
+<tr class="even">
+<td align="left">XGBoost</td>
+<td align="right">0.0063</td>
+<td align="right">6.3422</td>
+<td align="right">4.0913</td>
+</tr>
+</tbody>
+</table>
+<p>Each model was trained on a consistent set of predictors including
+time of day, precipitation, station, line, day of the week, incident
+type, and peak vs. non-peak designation. Performance was assessed on a
+held-out test set using three standard regression metrics: Root Mean
+Squared Error (RMSE), Mean Absolute Error (MAE), and R².</p>
+<p>Among the models, the Random Forest achieved the best overall
+performance with the lowest RMSE (6.2582) and highest R² (0.0120),
+indicating slightly better predictive accuracy and explanatory power
+compared to the others. The GAM and Linear Regression models produced
+very similar results, suggesting that delay duration may have limited
+nonlinearity or that the key nonlinear effects are already captured by
+categorical variables. Surprisingly, XGBoost, despite its typical
+performance advantages on structured data, underperformed in this case,
+yielding the highest RMSE (6.3422) and lowest R² (0.0063).</p>
+<p>The predicted vs. actual scatter plots further illustrate these
+findings. All models show a strong clustering of points in the 0–10
+minute range, where the majority of delays occur, but consistently
+underpredict longer delays. This is evident from the downward curvature
+below the ideal prediction line (red dashed), especially in the 15–40
+minute range, suggesting that none of the models fully captured the
+drivers of extreme delay events. The Random Forest plot demonstrates
+slightly better spread along the diagonal, but the overall prediction
+quality remains limited.</p>
+<div id="feature-importance" class="section level2">
+<h2>Feature Importance</h2>
+<p>To better understand which factors most strongly influence subway
+delay duration predictions, feature importance was extracted from the
+Random Forest and XGBoost models.
+<img src="Toronto-Subway-Delay-Analysis_files/figure-html/unnamed-chunk-10-1.png" width="960" /><img src="Toronto-Subway-Delay-Analysis_files/figure-html/unnamed-chunk-10-2.png" width="960" /></p>
+<p>In the Random Forest model, the top contributing features were
+specific stations, with Warden Station and Kennedy BD Station ranking
+highest. This suggests that certain stations may be systematically more
+prone to longer delays. Additionally, passenger-related incidents,
+precipitation, and Sunday delays also appeared as important predictors,
+highlighting both spatial and temporal influences on delay severity.</p>
+<p>In contrast, the XGBoost model placed overwhelming emphasis on
+precipitation, identifying it as the dominant predictor of delay
+duration. Station effects were present but less pronounced, with
+Yorkdale, Warden, and Keele among the top-ranked. Notably, incident
+type, hour of day, and day of week played a smaller role.</p>
+<p>These differing importance profiles highlight how model architecture
+affects variable interpretation: Random Forests tend to capture strong
+categorical interactions (e.g., specific stations), while XGBoost may
+better exploit numerical gradients like precipitation. The convergence
+around precipitation, stations, and incident type across both models
+suggests these are key factors shaping subway delay behavior.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Based on the models developed in this analysis, we can estimate the
+duration of subway delays using predictors such as station location,
+time of day, day of week, incident type, and precipitation. However, the
+overall predictive accuracy is limited. All four models—Linear
+Regression, GAM, Random Forest, and XGBoost—produced relatively low R²
+values (all below 0.02), indicating that the current set of predictors
+explains only a small portion of the variability in delay duration.</p>
+<p>While tree-based models like Random Forest performed slightly better
+in terms of RMSE and variable importance analysis revealed that
+precipitation, specific stations, and passenger-related incidents were
+consistently influential, all models struggled to predict longer or
+outlier delays. The clustering of predictions in the 0–10 minute range
+and the underestimation of extreme delays suggest that important
+explanatory factors may be missing, such as real-time ridership levels,
+operational disruptions, or special events.</p>
+<p>In conclusion, although it is possible to estimate delay durations to
+a limited degree using the available predictors, the low explanatory
+power indicates that more granular or contextual data is needed to build
+reliable and actionable prediction models.</p>
+</div>
+</div>
+
+<p>Copyright &copy; 2025. Avi Walia.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

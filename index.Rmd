@@ -1,32 +1,73 @@
 ---
-title: "JSC370 Final Project"
+title: "Toronto Subway Delay Analysis: Causes, Timing, and Line-Specific Patterns"
 author: "Avi Walia"
+subtitle: "JSC 370"
+date: "April 30, 2025"
 output: 
-    html_document:
-        toc: TRUE
-        toc_float: TRUE
+    html_document: 
+      toc: true
+      toc_float: true
+      highlight: tango
+      theme: simplex
 ---
 
-This is my JSC370 final project website!
+[GitHub Repository: Avi04w/TTC-Subway-Delays](https://github.com/Avi04w/TTC-Subway-Delays)
 
-
-```{r echo=F, warning=F, message=F}
-source("process_starbucks_data.R")
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(eval=T, echo=F, warning=F, message=F)
 ```
 
-## Showcasing plots {.tabset}
+## Introduction
 
-### Figure 1
+The Toronto Transit Commission (TTC) subway system is a critical part of Toronto's public transportation network, servicing over a million riders daily across multiple lines. However, subway delays have been a persistent issue, impacting the efficiency and reliability of the service. Understanding the primary causes of these delays and how they vary by time of day and across different subway lines is essential for improving service quality and enhancing passenger experience.
 
-```{r echo=FALSE}
-p1
-```
+This study aims to investigate the following questions:
+
+1. What are the primary causes of subway delays in Toronto and how do these delays vary by subway line/station?
+2. Can we estimate the duration of subway delays across Toronto’s TTC system based on different predictors?
+
+**Hypothesis:**
+
+**Question 1:**
+
+-   **Hypothesis 1:** Mechanical issues are the most common causes of subway delays in Toronto.
+-   **Hypothesis 2:** Delays are more frequent during peak hours (7-9 AM and 3-7 PM) compared to non-peak hours.
+-   **Hypothesis 3:** The Yonge-University line experiences more frequent delays than other lines due to higher passenger volumes and longer track lengths. Bloor-Yonge and Union stations will have the most and longest delays on this line since they are the most crowded stations in terms of ridership.
+
+**Question 2:**
+
+-    **Hypothesis:** I believe that the model we fit to predict length of delays will depend on: station, type of delay, hour of day, and weather.
+
+## Data Acquisition
+The dataset used in this analysis was obtained from the City of Toronto Open Data Portal using the Open Data API. The data includes all recorded subway delays in Toronto for the year 2024 and the most recent data of 2025, along with the delay codes, time, location, and other metadata. Additionally, a delay code definitions dataset was obtained from the same API and this was merged with the original data to provide description of each delay type.
+
+The extracted data includes:
+
+* **Time Stamp Information** (Date, Time, Day of Week, Hour of Delay)
+* **Location Details** (Station, Subway Line, Direction of Train)
+* **Delay Duration** (Minutes Delayed)
+* **Delay Cause** (Codes and Descriptions)
+* **Subway Car Details** (Vehicle ID)
+
+## Data Cleaning and Wrangling
+Several process steps were applied to clean and prepare the data for analysis.
+
+1. **Filtering Out Non-Delays and Multi-Station Delays**
+    * Some records had a delay of 0 minutes (or None). We are not interested in these incidents as they do not actually effect commute times for riders. This removed many of the columns with missing values.
+    * Some delays were TTC wide or spanned multiple stations. We did not include these as there is no way to pinpoint the cause of these delays. This was done using REGEX to remove values that included "TO ", "TOWARD", or "-".
+2. **Handling Missing Values:**
+    * The rest of the columns with missing information were removed.
+3. **Column Type Formatting:**
+    * The Minutes Delayed was a char column, this was converted to int
+    * The Time column was originally formatted as **HH:MM** and was converted to hms.
+    * The Date column was converted from a character to Datetime.
+    * An extra categorical column was added, distinguishing between peak and non-peak times.
+4. **Merging Delay Codes Information**
+    * The delay codes were matched with their corresponding descriptions from the delay code definitions dataset. 
+5. **Erroneous Data and Outliers**
+    * There is some data that was incorrectly inputted. One such example is that Warden station is once listed as being on the Yonge-University Line when it is actually on the Bloor-Danforth Line. 
+    * There is a delay that lasted 6 hours that started at 4am. This is a massive outlier that occurred when the trains were not even running. We can ignore this point as it is not indicative of any trends that we are trying to find.
+
+There are 788 observations and 14 variables for each observation.
 
 
-### Figure 2
-
-```{r echo=FALSE}
-p2
-```
-
-{-}

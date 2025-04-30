@@ -1,0 +1,698 @@
+---
+title: "Toronto Subway Delay Analysis: Causes, Timing, and Line-Specific Patterns"
+author: "Avi Walia"
+date: "March 14, 2025"
+output:
+  pdf_document:
+    fig_width: 10
+  github_document:
+    df_print: paged
+  html_document:
+    fig_width: 10
+---
+
+[GitHub Repository: Avi04w/TTC-Subway-Delays](https://github.com/Avi04w/TTC-Subway-Delays)
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(eval=T, echo=F, warning=F, message=F)
+```
+
+```{r api-call}
+#da251d
+
+library(opendatatoronto)
+library(dplyr)
+
+package <- show_package("996cfe8d-fb35-40ce-b569-698d51fc683b")
+resources <- list_package_resources("996cfe8d-fb35-40ce-b569-698d51fc683b")
+
+subway_code_data <- resources |> 
+  filter(id == "3900e649-f31e-4b79-9f20-4731bbfd94f7") |> 
+  get_resource()
+
+subway_delay_data <- resources |> 
+  filter(id == "2ee1a65c-da06-4ad1-bdfb-b1a57701e46a") |>
+  get_resource()
+
+
+subway_code_data <- subway_code_data |> 
+  select("SUB RMENU CODE", "CODE DESCRIPTION...3")
+colnames(subway_code_data) <- c("Code", "Code Description")
+
+subway_data <- merge(subway_delay_data, subway_code_data, by = "Code")
+```
+
+# Introduction
+
+The Toronto Transit Commission (TTC) subway system is a critical part of Toronto's public transportation network, servicing over a million riders daily across multiple lines. However, subway delays have been a persistent issue, impacting the efficiency and reliability of the service. Understanding the primary causes of these delays and how they vary by time of day and across different subway lines is essential for improving service quality and enhancing passenger experience.
+
+This study aims to investigate the following questions:
+
+1. What are the primary causes of subway delays in Toronto and how do these delays vary by subway line/station?
+2. Can we estimate the duration of subway delays across Toronto’s TTC system based on different predictors?
+
+**Hypothesis:**
+
+**Question 1:**
+
+-   **Hypothesis 1:** Mechanical issues are the most common causes of subway delays in Toronto.
+-   **Hypothesis 2:** Delays are more frequent during peak hours (7-9 AM and 3-7 PM) compared to non-peak hours.
+-   **Hypothesis 3:** The Yonge-University line experiences more frequent delays than other lines due to higher passenger volumes and longer track lengths. Bloor-Yonge and Union stations will have the most and longest delays on this line since they are the most crowded stations in terms of ridership.
+
+**Question 2:**
+
+-    **Hypothesis:** I believe that the model we fit to predict length of delays will depend on: station, type of delay, hour of day, and weather.
+
+To address these questions and test the hypotheses, we will utilize the TTC Subway Delay Data provided by the City of Toronto's Open Data portal as well as the Open-Meteo API to get Toronto weather data. The TTC dataset contains detailed information on delay incidents for the year 2024, including:
+
+* **Delay Codes** and their descriptions indicating the reasons for delays.
+* **Time Stamp Information** such as date, time, and day of the week.
+* **Location Details** including the station and subway line affected.
+* **Duration of Delays** measured in minutes.
+
+The data was acquired using the City's Open Data API. By exploring and analyzing this dataset, we seek to identify patterns and trends in delay causes, assess peak times for delays, and determine if specific lines and/or stations are more prone to certain types of delays. This analysis will inform potential strategies for mitigating delays and improving the TTC's operational efficiency.
+
+The OpenMeteo data contains:
+
+* **Temperature:** Hourly temperature data (in Celsius).
+* **Precipitation:** Hourly precipitation (rain and snowfall in mm).
+
+The data was acquired from the Open-Meteo Archive Data API. The API was called with the geographical coordinates for Toronto and contains hourly weather data for the city. The data will be used in a predictive model to answer Question 2.
+
+
+```{r data-cleaning}
+library(lubridate)
+
+colnames(subway_data)[colnames(subway_data) == "Min Delay"] <- "Min_Delay"
+
+subway_data <- subway_data |> 
+  filter(`Min_Delay` != "None")
+
+colnames(subway_data)[colnames(subway_data) == "_id"] <- "ID"
+
+subway_data$`Min_Delay` <- as.integer(subway_data$`Min_Delay`)
+
+subway_data <- subway_data |> 
+  filter(`Min_Delay` != 360) |> 
+  filter(Min_Delay > 0)
+
+subway_data$Date <- as.Date(subway_data$Date, format = "%Y-%m-%d")
+subway_data$Time <- paste0(subway_data$Time, ":00")
+subway_data$Time <- hms::as_hms(subway_data$Time)
+
+stations <- subway_data |> 
+  group_by(Station) |> 
+  summarise(
+    n = n()) %>% 
+  filter(n > 100)
+
+subway_data <- subway_data |> 
+  filter(Station %in% stations$Station)
+
+subway_data <- subway_data |> 
+  filter(Line %in% c("YU", "BD"))
+
+subway_data$Hour <- hour(subway_data$Time)
+subway_data <- subway_data |> 
+  mutate(Time_Category = case_when(
+    Hour %in% c(7, 8, 9, 15, 16, 17, 18) ~ "Peak",
+    TRUE ~ "Non-Peak"
+  ))
+```
+
+# Methods
+
+### Data Acquisition
+The dataset used in this analysis was obtained from the City of Toronto Open Data Portal using the Open Data API. The data includes all recorded subway delays in Toronto for the year 2024, along with the delay codes, time, location, and other metadata. Additionally, a delay code definitions dataset was obtained from the same API and this was merged with the original data to provide description of each delay type. Weather data was included from the Open-Meteo API as mentioned above.
+
+The extracted data includes:
+
+* **Time Stamp Information** (Date, Time, Day of Week, Hour of Delay)
+* **Location Details** (Station, Subway Line, Direction of Train)
+* **Delay Duration** (Minutes Delayed)
+* **Delay Cause** (Codes and Descriptions)
+* **Subway Car Details** (Vehicle ID)
+* **Weather Data** (Temperature, Precipitation)
+
+### Data Cleaning and Wrangling
+Several process steps were applied to clean and prepare the data for analysis.
+
+1. **Filtering Out Non-Delays and Multi-Station Delays**
+    * Some records had a delay of 0 minutes (or None). We are not interested in these incidents as they do not actually effect commute times for riders. This removed many of the columns with missing values.
+    * Some delays were TTC wide or spanned multiple stations. We did not include these as there is no way to pinpoint the cause of these delays. This was done using REGEX to remove values that included "TO ", "TOWARD", or "-".
+2. **Handling Missing Values:**
+    * The rest of the columns with missing information were removed.
+3. **Column Type Formatting:**
+    * The Minutes Delayed was a char column, this was converted to int
+    * The Time column was originally formatted as **HH:MM** and was converted to hms.
+    * The Date column was converted from a character to Datetime.
+    * An extra categorical column was added, distinguishing between peak and non-peak times.
+4. **Merging Delay Codes Information**
+    * The delay codes were matched with their corresponding descriptions from the delay code definitions dataset.
+    * The weather data at the time of each delay was also included. The data for the exact time is not the data set, however, it could be merged based on the floor of the delay time (if the delay happened at 4:24 PM, we got the weather data for 4:00 PM).
+5. **Erroneous Data and Outliers**
+    * There is some data that was incorrectly inputted. One such example is that Warden station is once listed as being on the Yonge-University Line when it is actually on the Bloor-Danforth Line. 
+    * There is a delay that lasted 6 hours that started at 4am. This is a massive outlier that is not a common occurrence (or even happened a second time). We can ignore this point as it is not indicative of any trends that we are trying to find.
+    * Stations along the Sheppard line were not included as there are not enough observations to make significant conclusions about any results. 
+
+There are 9178 observations and 16 variables for each observation.
+
+# Question 1: Delay Analysis
+
+## Exploratory Data Analysis (EDA)
+To understand the nature of the subway delays, the following initial analyses were performed:
+
+* **Summary Statistics:**
+    * Calculated the total number of delays and average delay duration at each station.
+    * Identified the most common delay causes and their frequency.
+* **Visualizations:**
+    * **Treemap:** Delay reasons visualized in proportional blocks.
+    * **Bar Chart:** Number of delays per subway line and station.
+* **Time-Based Analysis:**
+    * Created peak (7-9 AM, 3-7 PM) vs non-peak delay summaries.
+    * Examined how delay frequencies change by the hour.
+
+# Prelimary Results
+
+We can first look at the total delays and average delay duration by station:
+
+```{r summary-stats-delays-stations}
+library(knitr)
+
+station_summary <- subway_data |> 
+  group_by(Station) |> 
+  summarise(
+    `Total Delays` = n(),
+    `Average Delay Time` = mean(`Min_Delay`)
+  ) |> 
+  arrange(desc(`Total Delays`))
+
+kable(head(station_summary, 10), caption = "Top 10 Stations with Most Delays")
+```
+```{r barchart-delays-stations}
+library(ggplot2)
+
+station_delays <- subway_data |> 
+  group_by(Station, Line) |> 
+  summarise(Total_Delays = n(), .groups = "drop") |> 
+  arrange(desc(Total_Delays)) |> 
+  head(20)
+
+ggplot(station_delays, aes(x = reorder(Station, Total_Delays), y = Total_Delays, fill = Line)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(
+    title = "Total Number of Delays per Subway Station",
+    x = "Subway Station",
+    y = "Number of Delays",
+    fill = "Subway Line",
+    caption = "Figure 1: Data From City of Toronto Open Data Portal"
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("YU" = "#d9230f", "BD" = "steelblue")) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.background = element_rect(fill = "#fcfcfc", color = NA),
+        panel.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.box.background = element_rect(fill = "#fcfcfc", color = NA),
+        strip.background = element_rect(fill = "#fcfcfc", color = NA))
+```
+
+From this, we can see that Kipling, Bloor, Kennedy, Eglinton, Finch, St George, and VMC stations have the highest number of delays. These are all either transfer stations or are terminal stations (with the exception of Eglinton which is one of the busiest stations and the site of a future transfer station). We can also see that more Yonge-University line stations have have a large amount of delays, Kipling and Kennedy, which are are on the BD line have the most and third most delays. We can further look into this by exploring the types of delays that are occurring at stations.
+
+```{r summary-stats-delays-causes}
+delay_causes <- subway_data |> 
+  group_by(`Code Description`) |> 
+  summarise(
+    Count = n(), 
+    `Average Delay Time` = mean(`Min Delay`)) |> 
+  arrange(desc(Count)) |> 
+  head(10)
+
+kable(delay_causes, caption = "Top 10 Most Frequent Delay Causes")
+```
+
+```{r treemap-delay-causes}
+library(treemapify)
+
+ggplot(delay_causes, aes(area = Count, fill = Count, label = paste(`Code Description`, "\n", "Count:", Count, "Delays", "\n", "Average Delay:", round(`Average Delay Time`, 2), "mins"))) +
+  geom_treemap() +
+  geom_treemap_text(colour = "white", place = "centre", grow = TRUE) +
+  scale_fill_gradient(low = "indianred1", high = "indianred4") +
+  labs(title = "Top 10 Reasons of Delay",
+       caption = "Figure 2: Data From City of Toronto Open Data Portal") +
+  theme_minimal() +
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.background = element_rect(fill = "#fcfcfc", color = NA),
+        panel.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.box.background = element_rect(fill = "#fcfcfc", color = NA),
+        strip.background = element_rect(fill = "#fcfcfc", color = NA))
+```
+
+The top reasons for subway delays in Toronto seem to be passenger-related incidents, with "Disorderly Patron" being the most frequent cause, accounting for 157 delays with an average delay of 6.85 minutes. Other notable causes include Passenger Assistance Alarm Activation (72 delays, 4.11 min avg) and OPTO (COMMS) Train Door Monitoring (50 delays, 6.9 min avg).
+
+We can also look at which delays took the most time total:
+
+```{r total-delay-time}
+delay_summary <- subway_data |> 
+  group_by(Code, `Code Description`) |> 
+  summarise(Total_Delay_Time = sum(`Min Delay`, na.rm = TRUE)) |> 
+  arrange(desc(Total_Delay_Time)) |> 
+  head(10)
+
+ggplot(delay_summary, aes(x = reorder(Code, Total_Delay_Time), y = Total_Delay_Time, fill = Total_Delay_Time)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Delay Causes by Total Delay Time",
+    x = "Delay Code",
+    y = "Total Delay Time (Minutes)",
+    fill = "Total Delay (min)",
+    caption = "Figure 3: Data From City of Toronto Open Data Portal"
+  ) +
+  theme_minimal() +
+  scale_fill_gradient(low = "indianred1", high = "indianred4") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.background = element_rect(fill = "#fcfcfc", color = NA),
+        panel.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.box.background = element_rect(fill = "#fcfcfc", color = NA),
+        strip.background = element_rect(fill = "#fcfcfc", color = NA))
+
+
+# Display table
+delay_summary |> 
+  select(Code, `Code Description`) |> 
+  kable(caption = "Delay Code Definitions")
+
+```
+
+The top delay causes by total delay time highlight disorderly patrons as the most significant issue, causing over 1,000 minutes of delays throughout the year. Other major contributors include unauthorized people at track level, and injured or ill customers, each accumulating several hundred minutes of delays. Passenger-related incidents, including assaults, alarms, and other disruptions, collectively contribute to substantial downtime. The difference we see with this and the last visualization is that a few of the most commonly occurring delays, such as the passenger alarm being activated and unsanitary vehicle are not in the top 10 of total delay time since the average time for those delays is much less.
+
+Finally, we can view the occurrence of delays distributed by the time of day at which they occur.
+
+```{r summary-stats-delays-hours}
+peak_summary <- subway_data |> 
+  group_by(`Time Category`) |> 
+  summarise(
+    `Total Delays` = n(),
+    `Average Delay Time (mins)` = round(mean(`Min Delay`, na.rm = TRUE), 2)
+  )
+
+peak_summary <- peak_summary |> 
+  mutate(`Average Number of Delays per Hour` = ifelse(`Time Category` == "Peak", 
+                                             `Total Delays` / 8, 
+                                             `Total Delays` / 14))
+
+kable(peak_summary, caption = "Delays During Peak vs Non-Peak Hours")
+```
+
+```{r histogram-delays-hours}
+ggplot(subway_data, aes(x = Hour, fill = `Time Category`)) +
+  geom_bar() +
+  labs(
+    title = "Number of Delays by Hour of the Day",
+    x = "Hour of the Day",
+    y = "Total Delays",
+    fill = "Time Category",
+    caption = "Figure 4: Data From City of Toronto Open Data Portal"
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Peak" = "#d9230f", "Non-Peak" = "steelblue")) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.background = element_rect(fill = "#fcfcfc", color = NA),
+        panel.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.background = element_rect(fill = "#fcfcfc", color = NA),
+        legend.box.background = element_rect(fill = "#fcfcfc", color = NA),
+        strip.background = element_rect(fill = "#fcfcfc", color = NA))
+```
+
+There is no data for 3 and 4 am as the subway is closed for those hours. There is a major peak in the number of delays during the afternoon (between 2 and 4 pm), with the highest delays occurring around 3pm. What is interesting is that while the number of delays is much higher during peak hours, the average time of each delay is almost the same.
+
+## Summary
+This analysis of TTC subway delays has provided several key insights into delay causes, timing patterns, and station-specific trends. The most frequent delay and the delay that has wasted the most amount of time this year is **Disorderly Patrons**, accounting for 157 recorded delays and taking a total of 1075.45 hours, much more than any other delay type. Other common delay types include passenger assistance alarms being activated, train door monitoring issues, and medical emergencies. However, when examining total delay time, disruptions such as unauthorized people at track level and injured or ill customer incidents accumulate significantly more system downtime, despite occurring less frequently.
+
+in terms of time-based patters, delays are more frequent during peak hours (7-9 AM, 3-7 PM) when the TTC is running more trains, with a noticeable spike at 3 PM. Interestingly, while peak hours have more delays, the average duration of each delay is similar to non-peak periods, suggestions that the nature of delays remains relatively consistent through the day. Additionally, certain stations such as Kipling, Bloor, Kennedy and Finch experience the highest number of delays, many of which are near major transfer or terminal stations.
+
+# Question 2: Predictive Modelling
+
+In the second phase of this project, I aim to develop and compare multiple predictive models to estimate the duration of subway delays across Toronto’s TTC system. Building on prior exploratory findings, the objective is to quantify how factors such as time of day, subway line, station location, day of the week, and delay cause influence delay duration.
+
+The response variable will be delay duration (in minutes). Predictor variables will include:
+
+* **Temporal Variables:** Hour of the day, peak vs. non-peak, day of the week
+* **Spatial Variables:** Station name, subway line
+* **Incident Characteristics:** Delay cause (Passenger Related vs Non-Passenger Related)
+
+I will implement a variety of regression models including:
+
+* **Linear Regression** (as a baseline)
+* **Generalized Additive Models** (to capture non-linear temporal effects)
+* **Random Forest and Gradient Boosting Models** (to capture interactions and complex dependencies)
+
+Model performance will be evaluated using **RMSE**, **MAE**, and $\textbf{R^2}$ metrics on a holdout test set (80/20 split). This comparative analysis will identify the most suitable approach for forecasting subway delay durations and inform operational decision-making for delay mitigation strategies.
+
+```{r}
+library(httr)
+library(jsonlite)
+
+# Set Toronto's coordinates
+latitude <- 43.65107
+longitude <- -79.347015
+
+# Set start and end dates
+start_date <- "2024-01-01"
+end_date <- "2024-12-31"
+
+# Make GET request
+response <- GET(
+  url = "https://archive-api.open-meteo.com/v1/archive?",
+  query = list(
+    latitude = latitude,
+    longitude = longitude,
+    start_date = start_date,
+    end_date = end_date,
+    hourly = "temperature_2m,precipitation"
+  )
+)
+
+# Check if successful
+if (status_code(response) == 200) {
+  # Parse content
+  data <- content(response, as = "text", encoding = "UTF-8") %>%
+    fromJSON(flatten = TRUE)
+  
+  # Extract and organize hourly data
+  hourly_weather <- data$hourly  %>% 
+    as.data.frame()
+  
+} else {
+  print(response)
+  print(paste("Failed to retrieve data. Status code:", status_code(response)))
+}
+
+hourly_weather <- hourly_weather %>%
+  mutate(
+    Date = substr(time, 1, 10),
+    Time = substr(time, 12, 16)
+  ) %>%
+  select(Date, Time, everything(), -time) # reorder columns and remove original 'time' column
+```
+
+```{r}
+hourly_weather$Date <- as.Date(hourly_weather$Date, format = "%Y-%m-%d")
+hourly_weather <- hourly_weather |> 
+  mutate(Hour = strtoi(substr(Time, 1, 2)))
+
+full_data <- subway_data |> 
+  left_join(hourly_weather, by = c("Date", "Hour"))
+
+full_data <- full_data |> 
+  mutate(Incident = ifelse(grepl("Passenger|Customer|Assault|Polce|Unsanitary|Bomb|Patron|Emergency Alarm|Graffiti|Robbery|Suspicious Package|Unauthorized|Person", `Code Description`, ignore.case = TRUE), "Passenger Related", "Non-Passenger Related"))
+```
+
+
+```{r}
+library(caret)
+set.seed(123)
+
+regression_data <- full_data |> 
+  select(Min_Delay, Hour, temperature_2m, precipitation, Station, Line, Day, Incident, Time_Category)
+
+regression_data <- regression_data |> 
+  mutate(
+    Station = as.factor(Station),
+    Line = as.factor(Line),
+    Day = as.factor(Day),
+    Incident = as.factor(Incident),
+    Time_Category = as.factor(Time_Category)
+)
+
+regression_data <- na.omit(regression_data)
+
+train_index <- createDataPartition(regression_data$Min_Delay, p = 0.8, list = FALSE)
+
+train_data <- regression_data[train_index, ]
+test_data  <- regression_data[-train_index, ]
+```
+
+We start by fitting a linear regression model as a baseline. Then, a Generalized Linear Model (GAM) is fit. We will have a smoothing factor on Hour since time-of-day effects can be non-linear as well as precipitation, since heavy rainfall and snowfall might have an exponentially larger effect. We will reduce the model to incorporate only significant variables. Finally, we will implement and compare several regression models using historical TTC delay data. Specifically, I will fit a linear regression, a generalized additive model (GAM), a random forest, and an XGBoost regressor, using predictors such as time of day, precipitation, station, subway line, day of the week, delay type, and peak hour classification. Model performance will be evaluated using RMSE, MAE, and R² metrics on a held-out test set. This comparative analysis will identify the most accurate and robust modeling approach for understanding and forecasting subway delays.
+
+```{r}
+# Fit linear regression model
+lm_model <- train(
+  Min_Delay ~ Hour + temperature_2m + precipitation + Station + Line + Day + Incident + Time_Category,
+  data = train_data,
+  method = "lm",
+  trControl = trainControl(method = "none")
+)
+
+test_data <- test_data |> 
+  filter(Min_Delay < 100)
+
+lm_preds <- predict(lm_model, newdata = test_data)
+
+results_df <- data.frame(
+  Actual = test_data$Min_Delay,
+  Predicted = lm_preds
+)
+```
+
+```{r}
+# Evaluate performance
+lm_rmse <- RMSE(lm_preds, test_data$Min_Delay)
+lm_mae  <- MAE(lm_preds, test_data$Min_Delay)
+lm_r2   <- R2(lm_preds, test_data$Min_Delay)
+```
+
+
+
+```{r}
+library(mgcv)
+
+gam_model <- gam(`Min_Delay` ~ 
+                  s(Hour) + 
+                  s(precipitation) + 
+                  s(temperature_2m) + 
+                  Station + 
+                  Line + 
+                  Time_Category + 
+                  Day + 
+                  Incident,
+                data = train_data, 
+                family = gaussian())
+
+# Predict
+gam_preds <- predict(gam_model, newdata = test_data)
+
+gam_results_df <- data.frame(
+  Actual = test_data$Min_Delay,
+  Predicted = gam_preds
+)
+
+new_gam <- gam(`Min_Delay` ~ 
+                  s(precipitation) + 
+                  s(Hour) + 
+                  Station + 
+                  Incident,
+                data = train_data, 
+                family = gaussian())
+
+# Predict
+gam_preds <- predict(new_gam, newdata = test_data)
+
+gam_results_df <- data.frame(
+  Actual = test_data$Min_Delay,
+  Predicted = gam_preds
+)
+
+a <- AIC(gam_model, new_gam)
+```
+
+
+```{r}
+# Evaluate performance
+gam_rmse <- RMSE(gam_preds, test_data$Min_Delay)
+gam_mae  <- MAE(gam_preds, test_data$Min_Delay)
+gam_r2   <- R2(gam_preds, test_data$Min_Delay)
+```
+
+
+
+```{r}
+library(xgboost)
+
+factor_vars <- c("Station", "Line", "Day", "Incident", "Time_Category")
+for (var in factor_vars) {
+  train_data[[var]] <- as.factor(train_data[[var]])
+  test_data[[var]]  <- factor(test_data[[var]], levels = levels(train_data[[var]]))
+}
+
+# Fit Random Forest
+rf_model <- train(
+  Min_Delay ~ Hour + precipitation + Station + Line + Day + Incident + Time_Category,
+  data = train_data,
+  method = "rf",
+  trControl = trainControl(method = "cv", number = 5),
+  importance = TRUE
+)
+
+# Predict
+rf_preds <- predict(rf_model, newdata = test_data)
+
+# Evaluate
+rf_rmse <- RMSE(rf_preds, test_data$Min_Delay)
+rf_mae  <- MAE(rf_preds, test_data$Min_Delay)
+rf_r2   <- R2(rf_preds, test_data$Min_Delay)
+
+# Fit XGBoost
+xgb_model <- train(
+  Min_Delay ~ Hour + precipitation + Station + Line + Day + Incident + Time_Category,
+  data = train_data,
+  method = "xgbTree",
+  trControl = trainControl(method = "cv", number = 5),
+  verbosity = 0
+)
+
+# Predict
+xgb_preds <- predict(xgb_model, newdata = test_data)
+
+# Evaluate
+xgb_rmse <- RMSE(xgb_preds, test_data$Min_Delay)
+xgb_mae  <- MAE(xgb_preds, test_data$Min_Delay)
+xgb_r2   <- R2(xgb_preds, test_data$Min_Delay)
+```
+
+
+```{r}
+comparison_df <- data.frame(
+  Actual = test_data$Min_Delay,
+  Linear = predict(lm_model, newdata = test_data),
+  GAM = gam_preds,
+  RF = rf_preds,
+  XGB = xgb_preds
+)
+
+library(tidyr)
+long_df <- pivot_longer(comparison_df, cols = -Actual, names_to = "Model", values_to = "Predicted")
+
+ggplot(long_df, aes(x = Actual, y = Predicted)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "#da251d") +
+  facet_wrap(~ Model, scales = "free") +
+  labs(
+    title = "Predicted vs Actual Delay Duration by Model",
+    x = "Actual Delay Duration (minutes)",
+    y = "Predicted Delay Duration (minutes)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    strip.text = element_text(size = 14),
+    text = element_text(size = 12)
+  )
+
+
+residuals_df <- data.frame(
+  Model = c(rep("Linear", nrow(test_data)),
+            rep("GAM", nrow(test_data)),
+            rep("Random Forest", nrow(test_data)),
+            rep("XGBoost", nrow(test_data))),
+  Residual = c(
+    test_data$Min_Delay - predict(lm_model, newdata = test_data),
+    test_data$Min_Delay - gam_preds,
+    test_data$Min_Delay - rf_preds,
+    test_data$Min_Delay - xgb_preds
+  )
+)
+
+performance_metrics <- data.frame(
+  Model = c("Linear", "GAM", "Random Forest", "XGBoost"),
+  R2 = c(
+    R2(predict(lm_model, newdata = test_data), test_data$Min_Delay),
+    R2(gam_preds, test_data$Min_Delay),
+    R2(rf_preds, test_data$Min_Delay),
+    R2(xgb_preds, test_data$Min_Delay)
+  ),
+  RMSE = c(
+    RMSE(predict(lm_model, newdata = test_data), test_data$Min_Delay),
+    RMSE(gam_preds, test_data$Min_Delay),
+    RMSE(rf_preds, test_data$Min_Delay),
+    RMSE(xgb_preds, test_data$Min_Delay)
+  ),
+  MAE = c(
+    MAE(predict(lm_model, newdata = test_data), test_data$Min_Delay),
+    MAE(gam_preds, test_data$Min_Delay),
+    MAE(rf_preds, test_data$Min_Delay),
+    MAE(xgb_preds, test_data$Min_Delay)
+  )
+)
+
+performance_metrics[ , 2:4] <- round(performance_metrics[ , 2:4], 10)
+
+kable(performance_metrics, digits = 4, caption = "Model Performance Summary (R², RMSE, MAE)")
+```
+
+Each model was trained on a consistent set of predictors including time of day, precipitation, station, line, day of the week, incident type, and peak vs. non-peak designation. Performance was assessed on a held-out test set using three standard regression metrics: Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and R².
+
+Among the models, the Random Forest achieved the best overall performance with the lowest RMSE (6.2582) and highest R² (0.0120), indicating slightly better predictive accuracy and explanatory power compared to the others. The GAM and Linear Regression models produced very similar results, suggesting that delay duration may have limited nonlinearity or that the key nonlinear effects are already captured by categorical variables. Surprisingly, XGBoost, despite its typical performance advantages on structured data, underperformed in this case, yielding the highest RMSE (6.3422) and lowest R² (0.0063).
+
+The predicted vs. actual scatter plots further illustrate these findings. All models show a strong clustering of points in the 0–10 minute range, where the majority of delays occur, but consistently underpredict longer delays. This is evident from the downward curvature below the ideal prediction line (red dashed), especially in the 15–40 minute range, suggesting that none of the models fully captured the drivers of extreme delay events. The Random Forest plot demonstrates slightly better spread along the diagonal, but the overall prediction quality remains limited.
+
+## Feature Importance
+
+To better understand which factors most strongly influence subway delay duration predictions, feature importance was extracted from the Random Forest and XGBoost models.
+```{r}
+# Random Forest variable importance
+rf_importance <- varImp(rf_model)
+
+rf_imp_df <- rf_importance$importance
+rf_imp_df$Variable <- rownames(rf_imp_df)
+rf_imp_df <- rf_imp_df[order(-rf_imp_df$Overall), ][1:10, ]
+
+ggplot(rf_imp_df, aes(x = reorder(Variable, Overall), y = Overall)) +
+  geom_col(fill = "#da251d") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Variable Importance - Random Forest",
+    x = "Variable",
+    y = "Importance Score"
+  ) +
+  theme_minimal()
+
+# XGBoost variable importance
+xgb_importance <- varImp(xgb_model)
+
+xgb_imp_df <- xgb_importance$importance
+xgb_imp_df$Variable <- rownames(xgb_imp_df)
+xgb_imp_df <- xgb_imp_df[order(-xgb_imp_df$Overall), ][1:10, ]
+
+ggplot(xgb_imp_df, aes(x = reorder(Variable, Overall), y = Overall)) +
+  geom_col(fill = "#da251d") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Variable Importance - XGBoost",
+    x = "Variable",
+    y = "Importance Score"
+  ) +
+  theme_minimal()
+```
+
+In the Random Forest model, the top contributing features were specific stations, with Warden Station and Kennedy BD Station ranking highest. This suggests that certain stations may be systematically more prone to longer delays. Additionally, passenger-related incidents, precipitation, and Sunday delays also appeared as important predictors, highlighting both spatial and temporal influences on delay severity.
+
+In contrast, the XGBoost model placed overwhelming emphasis on precipitation, identifying it as the dominant predictor of delay duration. Station effects were present but less pronounced, with Yorkdale, Warden, and Keele among the top-ranked. Notably, incident type, hour of day, and day of week played a smaller role.
+
+These differing importance profiles highlight how model architecture affects variable interpretation: Random Forests tend to capture strong categorical interactions (e.g., specific stations), while XGBoost may better exploit numerical gradients like precipitation. The convergence around precipitation, stations, and incident type across both models suggests these are key factors shaping subway delay behavior.
+
+## Conclusion
+
+Based on the models developed in this analysis, we can estimate the duration of subway delays using predictors such as station location, time of day, day of week, incident type, and precipitation. However, the overall predictive accuracy is limited. All four models—Linear Regression, GAM, Random Forest, and XGBoost—produced relatively low R² values (all below 0.02), indicating that the current set of predictors explains only a small portion of the variability in delay duration.
+
+While tree-based models like Random Forest performed slightly better in terms of RMSE and variable importance analysis revealed that precipitation, specific stations, and passenger-related incidents were consistently influential, all models struggled to predict longer or outlier delays. The clustering of predictions in the 0–10 minute range and the underestimation of extreme delays suggest that important explanatory factors may be missing, such as real-time ridership levels, operational disruptions, or special events.
+
+In conclusion, although it is possible to estimate delay durations to a limited degree using the available predictors, the low explanatory power indicates that more granular or contextual data is needed to build reliable and actionable prediction models.
+
+
+
+

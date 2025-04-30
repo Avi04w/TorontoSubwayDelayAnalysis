@@ -5,13 +5,18 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "EDA"
+      href: eda.html
+    - text: "Predictive Modelling"
+      href: prediction.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/Avi04w/JSC-Website
       
 output:
   html_document:
-    theme: cosmo
+    theme: simplex
+    highlight: tango
     include:
       after_body: footer.html
     css: styles.css

@@ -9,11 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Avi Walia" />
 
-<meta name="date" content="2025-04-30" />
 
-<title>Toronto Subway Delay Analysis: Causes, Timing, and Line-Specific Patterns</title>
+<title>Exploratory Data Analysis (EDA): Station and Delay Analysis</title>
 
 <script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -337,120 +335,263 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Toronto Subway Delay Analysis: Causes,
-Timing, and Line-Specific Patterns</h1>
-<h3 class="subtitle">JSC 370</h3>
-<h4 class="author">Avi Walia</h4>
-<h4 class="date">April 30, 2025</h4>
+<h1 class="title toc-ignore">Exploratory Data Analysis (EDA): Station
+and Delay Analysis</h1>
 
 </div>
 
 
-<p><a href="https://github.com/Avi04w/TTC-Subway-Delays">GitHub
-Repository: Avi04w/TTC-Subway-Delays</a></p>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-<p>The Toronto Transit Commission (TTC) subway system is a critical part
-of Toronto’s public transportation network, servicing over a million
-riders daily across multiple lines. However, subway delays have been a
-persistent issue, impacting the efficiency and reliability of the
-service. Understanding the primary causes of these delays and how they
-vary by time of day and across different subway lines is essential for
-improving service quality and enhancing passenger experience.</p>
-<p>This study aims to investigate the following questions:</p>
-<ol style="list-style-type: decimal">
-<li>What are the primary causes of subway delays in Toronto and how do
-these delays vary by subway line/station?</li>
-<li>Can we estimate the duration of subway delays across Toronto’s TTC
-system based on different predictors?</li>
-</ol>
-<p><strong>Hypothesis:</strong></p>
-<p><strong>Question 1:</strong></p>
+<p>To understand the nature of the subway delays, the following initial
+analyses were performed:</p>
 <ul>
-<li><strong>Hypothesis 1:</strong> Mechanical issues are the most common
-causes of subway delays in Toronto.</li>
-<li><strong>Hypothesis 2:</strong> Delays are more frequent during peak
-hours (7-9 AM and 3-7 PM) compared to non-peak hours.</li>
-<li><strong>Hypothesis 3:</strong> The Yonge-University line experiences
-more frequent delays than other lines due to higher passenger volumes
-and longer track lengths. Bloor-Yonge and Union stations will have the
-most and longest delays on this line since they are the most crowded
-stations in terms of ridership.</li>
-</ul>
-<p><strong>Question 2:</strong></p>
+<li><strong>Summary Statistics:</strong>
 <ul>
-<li><strong>Hypothesis:</strong> I believe that the model we fit to
-predict length of delays will depend on: station, type of delay, hour of
-day, and weather.</li>
+<li>Calculated the total number of delays and average delay duration at
+each station.</li>
+<li>Identified the most common delay causes and their frequency.</li>
+</ul></li>
+<li><strong>Visualizations:</strong>
+<ul>
+<li><strong>Treemap:</strong> Delay reasons visualized in proportional
+blocks.</li>
+<li><strong>Bar Chart:</strong> Number of delays per subway line and
+station.</li>
+</ul></li>
+<li><strong>Time-Based Analysis:</strong>
+<ul>
+<li>Created peak (7-9 AM, 3-7 PM) vs non-peak delay summaries.</li>
+<li>Examined how delay frequencies change by the hour.</li>
+</ul></li>
 </ul>
+<div id="prelimary-results" class="section level2 tabset">
+<h2 class="tabset">Prelimary Results</h2>
+<div id="delays-per-station" class="section level3">
+<h3>Delays Per Station</h3>
+<p><img src="eda_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>We can see that Bloor, Kennedy, Kipling, Finch, Dundas, Eglinton, and
+VMC stations have the highest number of delays. These are all either
+terminal stations (Finch, Kennedy, Kipling, and VMC) or are the highest
+traffic stations which see the most passengers (Dundas and Eglinton). We
+can also see that more Yonge-University line stations have have a large
+amount of delays. No stations from the Sheppard line made this list. We
+can further look into this by exploring the types of delays that are
+occurring at stations.</p>
 </div>
-<div id="data-acquisition" class="section level2">
-<h2>Data Acquisition</h2>
-<p>The dataset used in this analysis was obtained from the City of
-Toronto Open Data Portal using the Open Data API. The data includes all
-recorded subway delays in Toronto for the year 2024 and the most recent
-data of 2025, along with the delay codes, time, location, and other
-metadata. Additionally, a delay code definitions dataset was obtained
-from the same API and this was merged with the original data to provide
-description of each delay type.</p>
-<p>The extracted data includes:</p>
-<ul>
-<li><strong>Time Stamp Information</strong> (Date, Time, Day of Week,
-Hour of Delay)</li>
-<li><strong>Location Details</strong> (Station, Subway Line, Direction
-of Train)</li>
-<li><strong>Delay Duration</strong> (Minutes Delayed)</li>
-<li><strong>Delay Cause</strong> (Codes and Descriptions)</li>
-<li><strong>Subway Car Details</strong> (Vehicle ID)</li>
-</ul>
+<div id="reasons-for-delay" class="section level3">
+<h3>Reasons For Delay</h3>
+<p><img src="eda_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<table style="width:100%;">
+<caption>Top 10 Most Frequent Delay Causes</caption>
+<colgroup>
+<col width="70%" />
+<col width="7%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Delay Code</th>
+<th align="right">Count</th>
+<th align="right">Average Delay Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Disorderly Patron</td>
+<td align="right">3405</td>
+<td align="right">2.5013216</td>
+</tr>
+<tr class="even">
+<td align="left">Injured or ill Customer (In Station) - Transported</td>
+<td align="right">2680</td>
+<td align="right">0.0742537</td>
+</tr>
+<tr class="odd">
+<td align="left">Passenger Other</td>
+<td align="right">2508</td>
+<td align="right">2.3257576</td>
+</tr>
+<tr class="even">
+<td align="left">Passenger Assistance Alarm Activated - No Trouble
+Found</td>
+<td align="right">1713</td>
+<td align="right">2.0811442</td>
+</tr>
+<tr class="odd">
+<td align="left">Injured or ill Customer (In Station) - Medical Aid
+Refused</td>
+<td align="right">1486</td>
+<td align="right">0.1130552</td>
+</tr>
+<tr class="even">
+<td align="left">OPTO (COMMS) Train Door Monitoring</td>
+<td align="right">1452</td>
+<td align="right">3.4765840</td>
+</tr>
+<tr class="odd">
+<td align="left">Miscellaneous Other</td>
+<td align="right">1019</td>
+<td align="right">1.4533857</td>
+</tr>
+<tr class="even">
+<td align="left">Escalator/Elevator Incident</td>
+<td align="right">832</td>
+<td align="right">0.0144231</td>
+</tr>
+<tr class="odd">
+<td align="left">Injured or ill Customer (On Train) - Medical Aid
+Refused</td>
+<td align="right">807</td>
+<td align="right">5.1846344</td>
+</tr>
+<tr class="even">
+<td align="left">Unauthorized at Track Level</td>
+<td align="right">721</td>
+<td align="right">7.7711512</td>
+</tr>
+</tbody>
+</table>
+<p>The top reasons for subway delays in Toronto seem to be
+passenger-related incidents, with “Disorderly Patron” being the most
+frequent cause, accounting for 3405 delays with an average delay of 2.5
+minutes. Other notable causes include Injured or Ill Customers (2680
+delays, 0.07 min avg), Passenger Assistance Alarm Activated (1713
+delays, 2.08 min avg) and Train Door Monitoring (1452 delays, 3.48 min
+avg).</p>
 </div>
-<div id="data-cleaning-and-wrangling" class="section level2">
-<h2>Data Cleaning and Wrangling</h2>
-<p>Several process steps were applied to clean and prepare the data for
-analysis.</p>
-<ol style="list-style-type: decimal">
-<li><strong>Filtering Out Non-Delays and Multi-Station Delays</strong>
-<ul>
-<li>Some records had a delay of 0 minutes (or None). We are not
-interested in these incidents as they do not actually effect commute
-times for riders. This removed many of the columns with missing
-values.</li>
-<li>Some delays were TTC wide or spanned multiple stations. We did not
-include these as there is no way to pinpoint the cause of these delays.
-This was done using REGEX to remove values that included “TO”, “TOWARD”,
-or “-”.</li>
-</ul></li>
-<li><strong>Handling Missing Values:</strong>
-<ul>
-<li>The rest of the columns with missing information were removed.</li>
-</ul></li>
-<li><strong>Column Type Formatting:</strong>
-<ul>
-<li>The Minutes Delayed was a char column, this was converted to
-int</li>
-<li>The Time column was originally formatted as <strong>HH:MM</strong>
-and was converted to hms.</li>
-<li>The Date column was converted from a character to Datetime.</li>
-<li>An extra categorical column was added, distinguishing between peak
-and non-peak times.</li>
-</ul></li>
-<li><strong>Merging Delay Codes Information</strong>
-<ul>
-<li>The delay codes were matched with their corresponding descriptions
-from the delay code definitions dataset.</li>
-</ul></li>
-<li><strong>Erroneous Data and Outliers</strong>
-<ul>
-<li>There is some data that was incorrectly inputted. One such example
-is that Warden station is once listed as being on the Yonge-University
-Line when it is actually on the Bloor-Danforth Line.</li>
-<li>There is a delay that lasted 6 hours that started at 4am. This is a
-massive outlier that occurred when the trains were not even running. We
-can ignore this point as it is not indicative of any trends that we are
-trying to find.</li>
-</ul></li>
-</ol>
-<p>There are 788 observations and 14 variables for each observation.</p>
+<div id="total-delay-time" class="section level3">
+<h3>Total Delay Time</h3>
+<p><img src="eda_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<table>
+<caption>Delay Code Definitions</caption>
+<thead>
+<tr class="header">
+<th align="left">Code</th>
+<th align="left">Code Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">SUDP</td>
+<td align="left">Disorderly Patron</td>
+</tr>
+<tr class="even">
+<td align="left">SUO</td>
+<td align="left">Passenger Other</td>
+</tr>
+<tr class="odd">
+<td align="left">SUUT</td>
+<td align="left">Unauthorized at Track Level</td>
+</tr>
+<tr class="even">
+<td align="left">PUOPO</td>
+<td align="left">OPTO (COMMS) Train Door Monitoring</td>
+</tr>
+<tr class="odd">
+<td align="left">MUI</td>
+<td align="left">Injured or ill Customer (On Train) - Transported</td>
+</tr>
+<tr class="even">
+<td align="left">MUIR</td>
+<td align="left">Injured or ill Customer (On Train) - Medical Aid
+Refused</td>
+</tr>
+<tr class="odd">
+<td align="left">MUPAA</td>
+<td align="left">Passenger Assistance Alarm Activated - No Trouble
+Found</td>
+</tr>
+<tr class="even">
+<td align="left">MUPR1</td>
+<td align="left">Priority One - Train in Contact With Person</td>
+</tr>
+<tr class="odd">
+<td align="left">MUSAN</td>
+<td align="left">Unsanitary Vehicle</td>
+</tr>
+<tr class="even">
+<td align="left">MUPLB</td>
+<td align="left">Fire/Smoke Plan B - Source TTC</td>
+</tr>
+</tbody>
+</table>
+<p>The top delay causes by total delay time highlight disorderly patrons
+as the most significant issue, causing over 8,000 minutes of delays
+throughout the year. Other major contributors include unauthorized
+people at track level, train door monitoring and injured or ill
+customers, each accumulating several hundred minutes of delays.
+Passenger-related incidents, including assaults, alarms, and other
+disruptions, collectively contribute to substantial downtime. The
+difference we see with this and the last visualization is that a few of
+the most commonly occurring delays, such as injured passengers in the
+station (not the trains), and elevator/escalator incidents are not in
+the top 10 of total delay time since the average time for those delays
+is much less.</p>
+</div>
+<div id="time-of-day-of-delays" class="section level3">
+<h3>Time of Day of Delays</h3>
+<p><img src="eda_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<table>
+<caption>Delays During Peak vs Non-Peak Hours</caption>
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="29%" />
+<col width="39%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Time Category</th>
+<th align="right">Total Delays</th>
+<th align="right">Average Delay Time (mins)</th>
+<th align="right">Average Number of Delays per Hour</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Non-Peak</td>
+<td align="right">15053</td>
+<td align="right">2.77</td>
+<td align="right">1075.214</td>
+</tr>
+<tr class="even">
+<td align="left">Peak</td>
+<td align="right">10089</td>
+<td align="right">3.03</td>
+<td align="right">1261.125</td>
+</tr>
+</tbody>
+</table>
+<p>Figure 4 shows the occurrence of delays distributed by the time of
+day at which they occur. The peak hours are based on the official TTC
+rush hour times when train service is increased. There is a significant
+jump in the number of delays during the rush hours as well as late at
+night at 11pm. What is interesting is that while the number of delays is
+much higher during peak hours, the average time of each delay is almost
+the same (they only differ by about 15 seconds).</p>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>This analysis of TTC subway delays has provided several key insights
+into delay causes, timing patterns, and station-specific trends. The
+most frequent delay and the delay that has wasted the most amount of
+time this year is <strong>Disorderly Patrons</strong>, accounting for
+3405 recorded delays and taking a total of 8517 hours, much more than
+any other delay type. Other common delay types include passenger
+assistance alarms being activated, train door monitoring issues, and
+medical emergencies. However, when examining total delay time,
+disruptions such as unauthorized people at track level and injured or
+ill customer on train incidents accumulate significantly more system
+downtime, despite occurring less frequently.</p>
+<p>In terms of time-based patters, delays are more frequent during peak
+hours (7-9 AM, 3-7 PM) when the TTC is running more trains, with a
+noticeable spike between 4 and 6 PM. Interestingly, while peak hours
+have more delays, the average duration of each delay is similar to
+non-peak periods, suggestions that the nature of delays remains
+relatively consistent through the day. Additionally, certain stations
+such as Kipling, Bloor, Kennedy and Finch experience the highest number
+of delays, many of which are near major transfer or terminal
+stations.</p>
 </div>
 
 <p>Copyright &copy; 2025. Avi Walia.</p>

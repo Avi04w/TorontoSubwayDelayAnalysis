@@ -1,1 +1,1 @@
-This is my JSC370 Final Project website home. The website is online at https://github.com/avi04w/jsc-website.
+This is my JSC370 Final Project website home. The website is online at https://avi04w.github.io/JSC-Website/.
